@@ -1,13 +1,15 @@
 # saijiki
 
-## Project clone
+## 初回の設定
+
+### Project clone
 
 ```
 git clone --recursive https://github.com/saijiki/saijiki.git
 cd saijiki
 ```
 
-## Laradock setup
+### Laradock setup
 
 ```
 cd laradock
@@ -18,7 +20,7 @@ sed -i 's/MYSQL_VERSION=.*/MYSQL_VERSION=5.7/' .env
 docker-compose up -d nginx mysql workspace
 ```
 
-## Laravel setup
+### Laravel setup
 
 ```
 docker-compose exec --user=laradock workspace bash
@@ -33,11 +35,17 @@ sed -i 's/DB_USERNAME=.*/DB_USERNAME=default/' .env
 php artisan key:generate
 ```
 
-## Vue.js setup
+### Vue.js setup
 
 ```
 cd frontend
 
 yarn install
-yarn serve
+```
+
+## ２回目以降
+```
+cd laradock
+
+docker-compose up -d nginx mysql workspace
 ```
