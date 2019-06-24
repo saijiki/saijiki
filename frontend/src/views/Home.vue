@@ -86,7 +86,7 @@ export default {
             });
 
             // ファイル送信
-            axios.post('/api/test', data).then(() => {});
+            axios.post('/api/test').then(() => {});
         },
     },
 };

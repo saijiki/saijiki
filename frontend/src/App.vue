@@ -20,7 +20,9 @@
         -->
 
         <v-content>
-            <router-view />
+            <v-fade-transition mode="out-in">
+                <router-view />
+            </v-fade-transition>
         </v-content>
     </v-app>
 </template>
@@ -35,6 +37,10 @@ export default {
 </script>
 
 <style>
+* {
+    user-select: none;
+}
+
 .theme--light.application {
     height: 100%;
     background-image: url('assets/flower.png');
