@@ -1,5 +1,7 @@
 <template>
     <v-app>
+        <!-- 上のやつ -->
+        <!--
         <v-toolbar app>
             <v-toolbar-title class="headline text-uppercase">
                 <span>Vuetify</span>
@@ -15,6 +17,7 @@
                 <v-icon>fas fa-external-link-alt</v-icon>
             </v-btn>
         </v-toolbar>
+        -->
 
         <v-content>
             <router-view />
@@ -25,10 +28,22 @@
 <script>
 export default {
     name: 'App',
-    data() {
-        return {
-            //
-        };
-    },
+    data: () => ({
+        //
+    }),
 };
 </script>
+
+<style>
+.theme--light.application {
+    height: 100%;
+    background-image: url('assets/flower.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+
+.v-btn {
+    text-transform: none !important;
+}
+</style>

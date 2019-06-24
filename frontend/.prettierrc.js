@@ -1,1 +1,1 @@
-module.exports = { singleQuote: true, trailingComma: 'es5', endOfLine: 'lf' };
+module.exports = { singleQuote: true, trailingComma: 'es5', endOfLine: 'crlf' };
