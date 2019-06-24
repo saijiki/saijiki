@@ -16,13 +16,18 @@
                     <v-layout row warp>
                         <v-flex xs12 sm1 offset-xs1>
                             <!-- いいねボタン -->
-                            <v-btn flat icon color="deep-orange">
+                            <v-btn
+                                flat
+                                icon
+                                color="deep-orange"
+                                @click="good++"
+                            >
                                 <v-icon>far fa-thumbs-up</v-icon>
                             </v-btn>
                         </v-flex>
                         <v-flex xs12 sm1>
                             <!-- いいね数 -->
-                            111
+                            {{ good }}
                         </v-flex>
                         <v-flex xs12 sm7 offset-xs1>
                             <!-- シェアボタン -->
@@ -75,7 +80,11 @@ import Flipper from 'vue-flipper';
 
 export default {
     components: { Flipper },
-    data: () => ({ isFlipped: false, dialog: false }),
+    data: () => ({
+        isFlipped: false,
+        good: 11,
+        dialog: false,
+    }),
 };
 </script>
 
