@@ -1,6 +1,7 @@
 <template>
     <div class="header">
         <header>
+            <!-- ヘッダー 仮 -->
             <div class="nav">
                 <v-btn
                     :to="{ name: 'home' }"
@@ -46,7 +47,6 @@ header {
     position: absolute;
     top: 5px;
     left: 5px;
-    width: 100%;
 }
 .header {
     height: 100%;
@@ -56,9 +56,5 @@ header {
     display: inline-block;
     padding: 50px;
     height: 100px;
-}
-
-.logo{
-  text-align:center;
 }
 </style>

@@ -14,26 +14,27 @@
 
                 <div class="Card__label" @click.stop>
                     <v-layout row warp>
-                        <v-flex xs12 sm1 offset-xs1>
+                        <v-flex xs12 sm6>
                             <!-- いいねボタン -->
                             <v-btn
+                                block
                                 flat
-                                icon
                                 color="deep-orange"
                                 @click="good++"
                             >
                                 <v-icon>far fa-thumbs-up</v-icon>
+                                <!-- いいね数 -->
+                                {{ good }}
                             </v-btn>
                         </v-flex>
-                        <v-flex xs12 sm1>
-                            <!-- いいね数 -->
-                            {{ good }}
-                        </v-flex>
-                        <v-flex xs12 sm7 offset-xs1>
+                        <v-flex xs12 sm6>
                             <!-- シェアボタン -->
-                            <v-btn block flat @click="dialog = true">
-                                <v-icon class="mr-2">fas fa-share</v-icon>
-                                シェアする
+                            <v-btn
+                                block
+                                flat
+                                @click="dialog = true"
+                            >
+                                <v-icon>fas fa-share</v-icon>
                             </v-btn>
                         </v-flex>
                     </v-layout>

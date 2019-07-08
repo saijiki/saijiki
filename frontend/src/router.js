@@ -34,6 +34,14 @@ export default new Router({
                     /* webpackChunkName: "about" */ './views/SenryuDetails.vue'
                 ),
         },
+        {
+            path: '/senryurank',
+            name: 'SenryuRank',
+            component: () =>
+                import(
+                    /* webpackChunkName: "about" */ './views/SenryuRank.vue'
+                ),
+        },
 
         {
             path: '/',

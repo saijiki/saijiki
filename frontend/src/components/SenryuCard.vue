@@ -51,6 +51,7 @@ export default {
         background-image: url('../assets/senryu-test.jpg');
         background-size: 100% 100%;
         margin-bottom: 20px;
+        border: solid 3px #008000;
     }
     &__value {
         display: block;
