@@ -18,7 +18,7 @@ class CreateSenryusTable extends Migration
             $table->string('body', 32);
             $table->unsignedInteger('good')->default(0);
             $table->string('path');
-            $table->boolean('is_public');
+            $table->boolean('is_public')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

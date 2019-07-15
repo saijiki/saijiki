@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+/*
+use Symfony\Component\Process\Process;
+*/
 use App\Senryu;
 
 class SenryuController extends Controller
@@ -14,7 +17,7 @@ class SenryuController extends Controller
      */
     public function index()
     {
-        return response()->json(null);
+        return response()->json(Senryu::paginate(6));
     }
 
     /**
@@ -25,7 +28,21 @@ class SenryuController extends Controller
      */
     public function store(Request $request)
     {
-        return response()->json(null);
+        /*
+        $process = new Process('python3 senryu.py');
+        $process->setWorkingDirectory(storage_path('app/python'));
+        $process->run();
+        */
+
+        $senryu = Senryu::create([
+            /*
+            'body' => $process->getOutput(),
+            */
+            'body' => 'あああああ いいいいいいい ううううう',
+            'path' => '/',
+        ]);
+
+        return response()->json($senryu);
     }
 
     /**
