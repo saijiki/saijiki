@@ -93,7 +93,7 @@ export default {
       });
 
       // ファイル送信
-      axios.post('/api/test').then(() => {});
+      axios.post('/api/senryus').then(() => {});
     },
   },
 };
