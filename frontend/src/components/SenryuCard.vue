@@ -1,4 +1,5 @@
 <template>
+  <router-link :to="{ name: 'SenryuDetails'}">
     <!-- カードのサイズ -->
     <flipper
         class="Card"
@@ -6,11 +7,12 @@
         height="360px"
         @click="isFlipped = !isFlipped"
     >
-        <!-- カードの中身 -->
-        <div class="Card__face" slot="front">
-            <!-- 川柳が入る -->
-        </div>
+      <!-- カードの中身 -->
+      <div class="Card__face" slot="front">
+          <!-- 川柳が入る -->
+      </div>
     </flipper>
+  </router-link>
 </template>
 
 <script>

@@ -13,7 +13,7 @@
                     <v-icon>fas fa-home</v-icon>
                 </v-btn>
             </div>
-            <div class="nav">
+            <!-- <div class="nav">
                 <v-btn
                     :to="{ name: 'SenryuDetails' }"
                     dark
@@ -24,7 +24,7 @@
                 >
                     <v-icon>仮</v-icon>
                 </v-btn>
-            </div>
+            </div> -->
             <div class="nav">
                 <v-btn
                     :to="{ name: 'SenryuList' }"
