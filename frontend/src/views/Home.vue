@@ -2,8 +2,19 @@
   <v-container fluid>
     <!-- レイアウト -->
     <v-layout align-center justify-center row fill-height>
+
+    <!-- フォーム -->
+      <v-form>
+        <v-text-field
+            outlined
+            label="キーワード"
+            append-icon= "fas fa-camera"
+            @click:append="pickFile"
+          ></v-text-field>
+      </v-form>
+
       <!-- アップロードボタン -->
-      <v-btn
+      <!-- <v-btn
       :loading="loading"
       :disabled="loading"
       color="#e290b1"
@@ -12,7 +23,7 @@
       >
       アップロード
       <v-icon right dark>fas fa-upload</v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <!-- ファイル選択 -->
     <input
