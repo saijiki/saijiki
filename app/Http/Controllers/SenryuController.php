@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-/*
 use Symfony\Component\Process\Process;
-*/
 use App\Senryu;
 
 class SenryuController extends Controller
@@ -28,17 +26,12 @@ class SenryuController extends Controller
      */
     public function store(Request $request)
     {
-        /*
-        $process = new Process('python3 senryu.py');
+        $process = new Process(['python3', 'saijiki.py', $request->word]);
         $process->setWorkingDirectory(storage_path('app/python'));
         $process->run();
-        */
 
         $senryu = Senryu::create([
-            /*
             'body' => $process->getOutput(),
-            */
-            'body' => 'あああああ いいいいいいい ううううう',
             'path' => '/',
         ]);
 

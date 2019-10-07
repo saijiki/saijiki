@@ -6,6 +6,7 @@
     <!-- フォーム -->
       <v-form>
         <v-text-field
+            v-model="word"
             outlined
             label="キーワード"
             append-icon= "fas fa-camera"
@@ -84,6 +85,7 @@ export default {
     dialog: false,
     imageUrl: '',
     imageFile: '',
+    word: '',
   }),
 
   methods: {
@@ -104,7 +106,7 @@ export default {
       });
 
       // ファイル送信
-      axios.post('/api/senryus').then(() => {});
+      axios.post('/api/senryus', { word: this.word }).then(() => {});
     },
   },
 };
