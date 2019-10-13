@@ -14,7 +14,7 @@ APP_CODE_PATH_CONTAINER=/var/www
 APP_CODE_CONTAINER_FLAG=:cached
 
 # Choose storage path on your machine. For all storage systems
-DATA_PATH_HOST=~/.laradock/data
+DATA_PATH_HOST=./data
 
 ### Drivers ################################################
 
@@ -192,6 +192,7 @@ PHP_FPM_INSTALL_PING=false
 PHP_FPM_INSTALL_SSHPASS=false
 PHP_FPM_FFMPEG=false
 PHP_FPM_ADDITIONAL_LOCALES="es_ES.UTF-8 fr_FR.UTF-8"
+PHP_FPM_INSTALL_MECAB=false
 
 ### PHP_WORKER ############################################
 

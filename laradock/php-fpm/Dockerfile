@@ -728,6 +728,36 @@ RUN if [ ${INSTALL_FFMPEG} = true ]; then \
 ;fi
 
 ###########################################################################
+# MeCab:
+###########################################################################
+
+USER root
+
+ARG INSTALL_MECAB=false
+
+RUN if [ ${INSTALL_MECAB} = true ]; then \
+    apt-get update -yqq \
+    && apt-get install -y sudo git mecab libmecab-dev mecab-ipadic-utf8 \
+    && git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git \
+    && ( \
+        cd mecab-ipadic-neologd/bin \
+        && ./install-mecab-ipadic-neologd -y -n \
+        && sed -i "s#dicdir = .*#dicdir = $(mecab-config --dicdir)/mecab-ipadic-neologd#" /etc/mecabrc \
+    ) \
+    && rm -r mecab-ipadic-neologd \
+    && git clone --depth 1 https://github.com/rsky/php-mecab.git \
+    && ( \
+        cd php-mecab/mecab \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+        && echo extension=mecab.so > /usr/local/etc/php/conf.d/docker-php-ext-mecab.ini \
+    ) \
+    && rm -r php-mecab \
+;fi
+
+###########################################################################
 # Check PHP version:
 ###########################################################################
 
