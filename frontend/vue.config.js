@@ -6,6 +6,9 @@ module.exports = {
             '^/api($|/)': {
                 target: 'http://localhost',
             },
+            '^/storage($|/)': {
+                target: 'http://localhost',
+            },
         },
     },
 };

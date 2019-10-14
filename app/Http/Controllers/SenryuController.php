@@ -26,16 +26,7 @@ class SenryuController extends Controller
      */
     public function store(Request $request)
     {
-        $process = new Process(['python3', 'saijiki.py', $request->word]);
-        $process->setWorkingDirectory(storage_path('app/python'));
-        $process->run();
-
-        $senryu = Senryu::create([
-            'body' => $process->getOutput(),
-            'path' => '/',
-        ]);
-
-        return response()->json($senryu);
+        return response()->json(Senryu::generate($request->all()));
     }
 
     /**
