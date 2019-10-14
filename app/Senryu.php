@@ -12,15 +12,6 @@ class Senryu extends Model
     use SoftDeletes;
 
     /**
-     * The model's default values for attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'path' => '/',
-    ];
-
-    /**
      * The attributes that aren't mass assignable.
      *
      * @var array
@@ -57,16 +48,11 @@ class Senryu extends Model
         list('body' => $sentence_2, 'keywords' => $keywords) = self::generateSentence(7, $morphemes, $keywords);
         list('body' => $sentence_3, 'keywords' => $keywords) = self::generateSentence(5, $morphemes, $keywords);
 
-        $senryu = self::create(['body' => "{$sentence_1} {$sentence_2} {$sentence_3}"]);
+        $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
 
-        $process = new Process(['python3', 'saijiki_img.py', $senryu->body]);
-        $process->setWorkingDirectory(storage_path('app/python'));
-        $process->run();
-
-        $senryu->path = "/storage/{$process->getOutput()}";
-        $senryu->save();
-
-        return $senryu;
+        return self::create([
+            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}")
+        ]);
     }
 
     /**
@@ -109,6 +95,23 @@ class Senryu extends Model
         }
 
         return ['body' => $surface, 'keywords' => Arr::only($morpheme, ['prev', 'next'])];
+    }
+
+    /**
+     * 指定された川柳の画像を生成する。
+     *
+     * @param  string  $sentence_1 初句
+     * @param  string  $sentence_2 二句
+     * @param  string  $sentence_3 結句
+     * @return string
+     */
+    private static function generateImage(string $sentence_1, string $sentence_2, string $sentence_3)
+    {
+        $process = new Process(['python3', 'saijiki_img.py', $sentence_1, $sentence_2, $sentence_3]);
+        $process->setWorkingDirectory(storage_path('app/python'));
+        $process->run();
+
+        return $process->getOutput();
     }
 
     /**
