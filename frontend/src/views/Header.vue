@@ -24,12 +24,29 @@
               <span class="headline">サイトの使い方</span>
             </v-card-title>
             <v-card-text>
-              説明
+              <div class="step1">
+                ステップ１
+                <v-layout wrap>
+                  <v-flex xs12 sm6>写真</v-flex>
+                  <v-flex xs12 sm6>キーワードに文字を入れる</v-flex>
+                </v-layout>
+              </div>
+
+              <div class="step2">
+                ステップ２
+                <v-layout wrap>
+                  <v-flex xs12 sm6>写真</v-flex>
+                  <v-flex xs12 sm6>説明</v-flex>
+                </v-layout>
+              </div>
+
+
             </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" flat="flat" @click="dialog = false">Disagree</v-btn>
-                <v-btn color="green darken-1" flat="flat" @click="dialog = false">Agree</v-btn>
+                  <v-btn color="green darken-1" flat="flat" @click="dialog = false">
+                    キャンセル
+                  </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -38,6 +55,16 @@
       <router-view></router-view>
     </div>
   </template>
+
+  <script>
+    export default {
+      data () {
+        return {
+          dialog: false,
+        }
+      }
+    }
+  </script>
 
   <style scoped>
   header {

@@ -8,7 +8,7 @@
         @click="isFlipped = !isFlipped"
     >
       <!-- カードの中身 -->
-      <div class="Card__face" slot="front">
+      <div class="Card__face" :style="{ backgroundImage: `url('${path}')` }" slot="front">
           <!-- 川柳が入る -->
       </div>
     </flipper>
@@ -20,6 +20,9 @@ import Flipper from 'vue-flipper';
 
 export default {
     components: { Flipper },
+    props: [
+      'path',
+    ],
     data: () => ({ isFlipped: false }),
     //date渡す
 };
@@ -29,6 +32,9 @@ export default {
 
 <style lang="scss" scoped>
 .Card {
+    background-color: #fff;
+    border-radius: 20px;
+
     &__face,
     &__pattern {
         width: 100%;
@@ -37,12 +43,6 @@ export default {
         box-shadow: 0 3px 15px rgba(#000, 0.45);
         cursor: pointer;
     }
-    // カード裏面
-    &__pattern {
-        background-image: url('../assets/senryu-test-pic.jpg');
-        background-color: #fff;
-        background-position: center;
-    }
     // カード表面
     &__face {
         display: flex;
@@ -50,7 +50,6 @@ export default {
         justify-content: space-between;
         height: 100%;
         padding: 15px;
-        background-image: url('../assets/senryu-test.jpg');
         background-size: 100% 100%;
         margin-bottom: 20px;
         border: solid 3px #008000;

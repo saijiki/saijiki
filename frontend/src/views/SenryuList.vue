@@ -21,7 +21,7 @@
     <!-- 川柳配置 -->
     <v-layout align-start justify-space-around row wrap fill-height>
       <div v-for="(item, index) in senryus" :key="index" class="mb-2">
-        {{ item.body }}
+        <SenryuCard :path="item.path" />
       </div>
     </v-layout>
     <!-- ページネーション -->
