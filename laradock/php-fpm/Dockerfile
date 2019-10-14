@@ -728,6 +728,20 @@ RUN if [ ${INSTALL_FFMPEG} = true ]; then \
 ;fi
 
 ###########################################################################
+# Pillow:
+###########################################################################
+
+USER root
+
+ARG INSTALL_PILLOW=false
+
+RUN if [ ${INSTALL_PILLOW} = true ]; then \
+    apt-get update -yqq \
+    && apt-get install -y python3 python3-dev python3-pip \
+    && pip3 install Pillow \
+;fi
+
+###########################################################################
 # MeCab:
 ###########################################################################
 
