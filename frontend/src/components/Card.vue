@@ -29,11 +29,7 @@
                         </v-flex>
                         <v-flex xs12 sm6>
                             <!-- シェアボタン -->
-                            <v-btn
-                                block
-                                flat
-                                @click="dialog = true"
-                            >
+                            <v-btn block flat @click="dialog = true">
                                 <v-icon>fas fa-share</v-icon>
                             </v-btn>
                         </v-flex>

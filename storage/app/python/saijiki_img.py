@@ -25,7 +25,7 @@ image_data.putalpha(0)
 
 # 文字合成
 img_width,img_height = image_data.size
-font_size = 50
+font_size = 70
 draw_start_x = img_width - 200
 draw_start_y = 30
 

@@ -1,18 +1,22 @@
 <template>
-  <router-link :to="{ name: 'SenryuDetails'}">
-    <!-- カードのサイズ -->
-    <flipper
-        class="Card"
-        width="324px"
-        height="360px"
-        @click="isFlipped = !isFlipped"
-    >
-      <!-- カードの中身 -->
-      <div class="Card__face" :style="{ backgroundImage: `url('${path}')` }" slot="front">
-          <!-- 川柳が入る -->
-      </div>
-    </flipper>
-  </router-link>
+    <router-link :to="{ name: 'SenryuDetails' }">
+        <!-- カードのサイズ -->
+        <flipper
+            class="Card"
+            width="324px"
+            height="360px"
+            @click="isFlipped = !isFlipped"
+        >
+            <!-- カードの中身 -->
+            <div
+                class="Card__face"
+                :style="{ backgroundImage: `url('${path}')` }"
+                slot="front"
+            >
+                <!-- 川柳が入る -->
+            </div>
+        </flipper>
+    </router-link>
 </template>
 
 <script>
@@ -20,9 +24,7 @@ import Flipper from 'vue-flipper';
 
 export default {
     components: { Flipper },
-    props: [
-      'path',
-    ],
+    props: ['path'],
     data: () => ({ isFlipped: false }),
     //date渡す
 };
