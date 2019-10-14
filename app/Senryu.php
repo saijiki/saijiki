@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Symfony\Component\Process\Process;
 
 class Senryu extends Model
 {
@@ -56,7 +57,16 @@ class Senryu extends Model
         list('body' => $sentence_2, 'keywords' => $keywords) = self::generateSentence(7, $morphemes, $keywords);
         list('body' => $sentence_3, 'keywords' => $keywords) = self::generateSentence(5, $morphemes, $keywords);
 
-        return self::create(['body' => "{$sentence_1} {$sentence_2} {$sentence_3}"]);
+        $senryu = self::create(['body' => "{$sentence_1} {$sentence_2} {$sentence_3}"]);
+
+        $process = new Process(['python3', 'saijiki_img.py', $senryu->body]);
+        $process->setWorkingDirectory(storage_path('app/python'));
+        $process->run();
+
+        $senryu->path = "/storage/{$process->getOutput()}";
+        $senryu->save();
+
+        return $senryu;
     }
 
     /**

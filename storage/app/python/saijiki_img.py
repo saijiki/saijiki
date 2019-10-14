@@ -1,52 +1,38 @@
-from PIL import Image, ImageFont, ImageDraw
-from Senryu_text import draw_text
-# from Senryu_rubi import text_to_kana
+import datetime
 import io
 import sys
+
+from PIL import Image, ImageDraw, ImageFont
+from saijiki_txt import draw_text
 
 # 標準入力の文字コードを明示する
 sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='UTF-8')
 
-######## 変数宣言 ##
+######## 変数宣言 ########
 
-# echo 'ABC' | python Senryu_Image.py ←のABCを取得
-TARGET_STRING = sys.stdin.readline()
+# python3 saijiki_img.py '' ←のテキストを取得
+TARGET_STRING = sys.argv[1]
 
 # Fontファイルまでのパス
-FONT_FILE_PATH = "fonts/hannari/Hannari_verticalFont.otf"
+FONT_FILE_PATH = "Hannari_verticalFont.otf"
 
 # 合成画像出力のファイルパス
-OUTPUT_FILE_PATH = "../public/output.png"
+OUTPUT_FILE_NAME = '{0:%Y%m%d%H%M%S}.png'.format(datetime.datetime.now())
+OUTPUT_FILE_PATH = '../public/{0}'.format(OUTPUT_FILE_NAME)
 
-# 画像までのファイルパス
-FRAME_IMAGE_PATH = "images/378394.png"
+image_data = Image.new('RGB', (540,600),(255,255,255))
+image_data.putalpha(0)
 
-######## END ########
-
-# 元画像の取得
-image_data = Image.open(FRAME_IMAGE_PATH)
-
-######### 透過画像を使用する場合 ##########
-
-trans = Image.new('RGB', (540,600),(255,255,255))
-
-trans.putalpha(0)
-
-OUTPUT_FILE_PATH = 'tmp/trans.png'
-
-trans.save(OUTPUT_FILE_PATH)
-
-image_data = Image.open(OUTPUT_FILE_PATH)
-######### end ###################
 # 文字合成
 img_width,img_height = image_data.size
 font_size = 50
 draw_start_x = img_width - 200
 draw_start_y = 30
-# Senryu_text.pyから呼び出し
+
+# saijiki_txt.py から呼び出し
 draw_text(image_data, font_size, FONT_FILE_PATH, TARGET_STRING, draw_start_x, draw_start_y)
 
 # 合成した画像の保存
 image_data.save(OUTPUT_FILE_PATH)
-# 閲覧
-# image_data.show()
+
+print(OUTPUT_FILE_NAME, end='')
