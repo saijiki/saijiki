@@ -20,67 +20,48 @@
     </v-layout>
     <!-- 川柳配置 -->
     <v-layout align-start justify-space-around row wrap fill-height>
-      <div v-for="(item, index) in senryu" :key="index" class="mb-2">
-        <SenryuCard />
+      <div v-for="(item, index) in senryus" :key="index" class="mb-2">
+        {{ item.body }}
       </div>
     </v-layout>
     <!-- ページネーション -->
     <div class="text-xs-center">
-      <v-pagination v-model="page" :length="4" prev-icon="fas fa-angle-left" next-icon="fas fa-angle-right"></v-pagination>
+      <v-pagination v-model="page" :length="length" prev-icon="fas fa-angle-left" next-icon="fas fa-angle-right"></v-pagination>
     </div>
   </v-container>
 </template>
 
 <script>
+import axios from 'axios';
 import SenryuCard from '@/components/SenryuCard';
 
 export default {
   components: { SenryuCard },
   data: () => ({
-    senryu: [
-      {
-        id: 0,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
-      {
-        id: 1,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
-      {
-        id: 1,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
-      {
-        id: 1,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
-      {
-        id: 1,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
-      {
-        id: 1,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
+    senryus: [
     ],
     //絞り込み
     dayItems: ['今日', '今週', '今月', '全て'],
     orderItems: ['人気順', '新着順'],
     //ページ
-    page: 1
-
+    page: 1,
+    length: 0,
   }),
+  watch: {
+    page() {
+      this.getSenryu();
+    },
+  },
+  created() {
+    this.getSenryu();
+  },
+  methods:{
+    getSenryu(){
+      axios.get(`/api/senryus?page=${this.page}`).then(({data}) => {
+        this.senryus = data.data;
+        this.length = data.last_page;
+      });
+    }
+  },
 };
 </script>

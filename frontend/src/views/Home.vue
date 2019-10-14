@@ -4,13 +4,14 @@
     <v-layout align-center justify-center row fill-height>
 
     <!-- フォーム -->
-      <v-form>
+      <v-form @submit.prevent="() => {}">
         <v-text-field
             v-model="word"
             outlined
             label="キーワード"
             append-icon= "fas fa-camera"
             @click:append="pickFile"
+            @keyup.enter="submit"
           ></v-text-field>
       </v-form>
 
@@ -43,7 +44,7 @@
             <v-card-title class="headline">アップロード</v-card-title>
         </v-flex>
         <v-flex shrink pa-1>
-            <v-checkbox v-model="ex4" label="公開" color="success" value="success" hide-details></v-checkbox>
+            <v-checkbox label="公開" color="success" value="success" hide-details></v-checkbox>
         </v-flex>
       </v-layout>
       <v-card-text>
@@ -104,9 +105,12 @@ export default {
         this.imageFile = files[0]; // this is an image file that can be sent to server...
         this.dialog = true;
       });
-
+    },
+    submit(e){
       // ファイル送信
-      axios.post('/api/senryus', { word: this.word }).then(() => {});
+      axios.post('/api/senryus', { word: this.word }).then(() => {}).catch(() => {
+        alert('エラー');
+      });
     },
   },
 };

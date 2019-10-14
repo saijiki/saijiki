@@ -10,17 +10,6 @@ export default new Router({
     base: process.env.BASE_URL,
     routes: [
         {
-            path: '/senryu-list',
-            name: 'SenryuList',
-            // route level code-splitting
-            // this generates a separate chunk (about.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () =>
-                import(
-                    /* webpackChunkName: "about" */ './views/SenryuList.vue'
-                ),
-        },
-        {
             path: '/test',
             name: 'test',
             component: () =>
@@ -51,6 +40,17 @@ export default new Router({
                     path: '',
                     name: 'home',
                     component: Home,
+                },
+                {
+                    path: '/senryu-list',
+                    name: 'SenryuList',
+                    // route level code-splitting
+                    // this generates a separate chunk (about.[hash].js) for this route
+                    // which is lazy-loaded when the route is visited.
+                    component: () =>
+                        import(
+                            /* webpackChunkName: "about" */ './views/SenryuList.vue'
+                        ),
                 },
             ],
         },

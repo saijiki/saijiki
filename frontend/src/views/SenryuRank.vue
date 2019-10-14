@@ -10,32 +10,20 @@
 </template>
 
 <script>
+import axios from 'axios';
 import SenryuCard from '@/components/SenryuCard';
 
 export default {
   components: { SenryuCard },
   data: () => ({
     senryu: [
-      {
-        id: 0,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
-      {
-        id: 1,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
-      {
-        id: 1,
-        url: '',
-        good: 0,
-        created_at: '2019-01-01 00:00:00',
-      },
     ],
   }),
+  created() {
+    axios.get('/api/senryus').then(senryus => {
+      console.log(senryus);
+    });
+  },
 };
 </script>
 <style lang="scss" scoped>
