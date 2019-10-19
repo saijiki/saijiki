@@ -65,7 +65,7 @@ class Senryu extends Model
      */
     private static function generateSentence(int $chars, array $morphemes, array $keywords)
     {
-        if (!Arr::has($keywords, 'prev') && !Arr::has($keywords, 'next')) {
+        if (!Arr::has($keywords, 'prev') || !Arr::has($keywords, 'next')) {
             $keywords = [
                 'prev' => $keywords,
                 'next' => $keywords,
@@ -77,16 +77,16 @@ class Senryu extends Model
 
         while (true) {
             if (isset($morpheme)) {
-                $morpheme = $morphemes[$keyword = Arr::random($morpheme['next'])];
+                $morpheme = $morphemes[Arr::random($morpheme['next'])];
             } else {
-                $morpheme = $morphemes[$keyword = Arr::random($keywords['next'])];
+                $morpheme = $morphemes[Arr::random($keywords['next'])];
             }
 
             if (self::calcMora($reading) + self::calcMora($morpheme['reading']) > $chars) {
                 continue;
             }
 
-            $surface .= $keyword;
+            $surface .= $morpheme['surface'];
             $reading .= $morpheme['reading'];
 
             if (self::calcMora($reading) === $chars) {
