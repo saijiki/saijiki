@@ -3,10 +3,7 @@ module.exports = {
     indexPath: '../resources/views/welcome.blade.php',
     devServer: {
         proxy: {
-            '^/api($|/)': {
-                target: 'http://localhost',
-            },
-            '^/storage($|/)': {
+            '^/(api|storage)($|/)': {
                 target: 'http://localhost',
             },
         },

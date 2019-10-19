@@ -11,4 +11,4 @@
 |
 */
 
-Route::get('/{any}', 'SpaController')->where('any', '^(?!api($|/)).*');
+Route::get('/{any}', 'SpaController')->where('any', '^(?!(api|storage)($|/)).*');
