@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use MeCab\Tagger;
 
 class GenerateMorphemes extends Command
 {
@@ -37,6 +38,57 @@ class GenerateMorphemes extends Command
      */
     public function handle()
     {
-        //
+        $mecab = new Tagger(['-d' => `echo -n $(mecab-config --dicdir)/mecab-ipadic-neologd`]);
+
+        $data = \Storage::get('python/all_haikus.txt');
+        $data = preg_split("/(?:\n|\r|\r\n)+/", $data);
+
+        $bar = $this->output->createProgressBar();
+        $bar->setBarCharacter('-');
+        $bar->setEmptyBarCharacter('|');
+        $bar->setProgressCharacter('>');
+        $bar->setBarWidth(50);
+
+        $result = [
+            //
+        ];
+
+        foreach ($bar->iterate($data) as $value) {
+            foreach ($mecab->parseToNode($value) as $node) {
+                $surface = $node->getSurface();
+                $feature = $node->getFeature();
+
+                [$part_of_speech, , , , , , , $reading, ] = array_pad(explode(',', $feature), 9, '*');
+
+                if ($part_of_speech === '記号') {
+                    continue;
+                }
+
+                if ($reading === '*') {
+                    continue;
+                }
+
+                if (!array_key_exists($surface, $result)) {
+                    $result[$surface] = array_merge(compact('surface', 'reading', 'part_of_speech'), [
+                        'prev' => [],
+                        'next' => [],
+                    ]);
+                }
+
+                while (($node = $node->getPrev()) && !array_key_exists($node->getSurface(), $result));
+
+                if ($node) {
+                    if (!in_array($surface, $result[$node->getSurface()]['next'], true)) {
+                        $result[$node->getSurface()]['next'][] = $surface;
+                    }
+
+                    if (!in_array($node->getSurface(), $result[$surface]['prev'], true)) {
+                        $result[$surface]['prev'][] = $node->getSurface();
+                    }
+                }
+            }
+        }
+
+        \Storage::put('python/morphemes.json', json_encode($result, JSON_UNESCAPED_UNICODE));
     }
 }

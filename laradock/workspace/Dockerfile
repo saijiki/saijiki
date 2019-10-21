@@ -1099,6 +1099,34 @@ RUN if [ ${INSTALL_GNU_PARALLEL} = true ]; then \
   apt-get -y install parallel \
 ;fi
 
+###########################################################################
+# MeCab:
+###########################################################################
+
+USER root
+
+ARG INSTALL_MECAB=false
+
+RUN if [ ${INSTALL_MECAB} = true ]; then \
+    apt-get update -yqq \
+    && apt-get install -y sudo git mecab libmecab-dev mecab-ipadic-utf8 \
+    && git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git \
+    && ( \
+        mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -y -n \
+    ) \
+    && rm -r mecab-ipadic-neologd \
+    && git clone --depth 1 https://github.com/rsky/php-mecab.git \
+    && ( \
+        cd php-mecab/mecab \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r php-mecab \
+;fi
+
+COPY ./mecab.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d
 
 ###########################################################################
 # Check PHP version:

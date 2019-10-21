@@ -1,161 +1,98 @@
-# saijiki
+# Saijiki
 
-## 初回の設定
+- [Docker for Windows or Docker for Mac](#docker-for-windows-or-docker-for-mac)
+    - [初回の設定](#初回の設定)
+        - [プロジェクトのクローン](#プロジェクトのクローン)
+        - [Laradockのセットアップ](#laradockのセットアップ)
+        - [Laravelのセットアップ](#laravelのセットアップ)
+        - [Vue.jsのセットアップ](#vuejsのセットアップ)
+- [Docker Toolbox](#docker-toolbox)
+    - [初回の設定](#初回の設定-1)
+        - [プロジェクトのクローン](#プロジェクトのクローン-1)
+        - [Laradockのセットアップ](#laradockのセットアップ-1)
+            - [ポートフォワーディング](#ポートフォワーディング)
+        - [Laravelのセットアップ](#laravelのセットアップ-1)
+        - [Vue.jsのセットアップ](#vuejsのセットアップ-1)
+            - [ポートフォワーディング](#ポートフォワーディング-1)
 
-上から順に実行する。
+## Docker for Windows or Docker for Mac
 
-### プロジェクトのクローン
+### 初回の設定
 
+#### プロジェクトのクローン
+
+```sh
+git clone https://github.com/saijiki/saijiki.git && cd saijiki/laradock
 ```
-git clone --recursive https://github.com/saijiki/saijiki.git
 
-cd saijiki
+#### Laradockのセットアップ
+
+```sh
+cp env-example .env && docker-compose up -d nginx mysql
 ```
 
-### Laradockのセットアップ
+#### Laravelのセットアップ
 
-```
-cd laradock
-
-cp env-example .env
-sed -i 's/MYSQL_VERSION=.*/MYSQL_VERSION=5.7/' .env
-
-docker-compose up -d nginx mysql workspace
-```
-
-### Laravelのセットアップ
-
-```
+```sh
 docker-compose exec --user=laradock workspace bash
 
-cp .env.example .env
-sed -i 's/DB_HOST=.*/DB_HOST=mysql/' .env
-sed -i 's/DB_DATABASE=.*/DB_DATABASE=default/' .env
-sed -i 's/DB_USERNAME=.*/DB_USERNAME=default/' .env
-
 composer install
+composer run-script post-root-package-install
+composer run-script post-create-project-cmd
 
-php artisan key:generate
+php artisan migrate:fresh --seed
 ```
 
-### Vue.jsのセットアップ
+#### Vue.jsのセットアップ
 
-```
-cd frontend
-
-yarn install
-exit
+```sh
+cd frontend && yarn install && exit
 ```
 
 ## Docker Toolbox
 
-### ２回目以降
+### 初回の設定
 
-プロジェクトのディレクトリに移動してから下記のコマンドを実行する。
+#### プロジェクトのクローン
 
+```sh
+git clone https://github.com/saijiki/saijiki.git && cd saijiki/laradock
 ```
-cd laradock
-docker-compose up -d nginx mysql workspace
 
+#### Laradockのセットアップ
+
+```sh
+cp env-example .env && docker-compose up -d nginx mysql
+```
+
+##### ポートフォワーディング
+
+```sh
 ssh -fNCL 0.0.0.0:80:localhost:80 docker@192.168.99.100
-docker@192.168.99.100's password: tcuser
-
-ssh -fNCL 0.0.0.0:8080:localhost:8888 docker@192.168.99.100
-docker@192.168.99.100's password: tcuser
+# docker@192.168.99.100's password: tcuser
 ```
 
-yarnやphp、composerを使用する際は下記のコマンドを実行する。
+#### Laravelのセットアップ
 
-```
+```sh
 docker-compose exec --user=laradock workspace bash
+
+composer install
+composer run-script post-root-package-install
+composer run-script post-create-project-cmd
+
+php artisan migrate:fresh --seed
 ```
 
-### フロントエンドの開発
+#### Vue.jsのセットアップ
 
-フロントエンドのディレクトリに移動して作業する。
-
-#### 8888番ポートの開放
-
-外部(ホストPC)から開発サーバにアクセスできるよう設定する。  
-管理者権限で実行する。
-
-```
-docker inspect -f {{.NetworkSettings.Networks.laradock_backend.IPAddress}} laradock_workspace_1
-# IPアドレスが出力される ... (1)
-
-docker-machine ssh
-sudo iptables -t nat -A DOCKER ! -i docker0 -p tcp -m tcp --dport 8888 -j DNAT --to-destination (1)のIPアドレス:8080
-exit
-
+```sh
+cd frontend && yarn install && exit
 ```
 
-#### 開発サーバの起動
+##### ポートフォワーディング
 
-下記のコマンドを実行して [http://localhost:8080](http://localhost:8080) にアクセスする。
-
-```
-yarn run serve
-```
-
-#### コードの整形
-
-下記のコマンドを実行する。
-
-```
-yarn run lint
-```
-
-#### Gitのコミット前に
-
-プロジェクトをビルドしてからコミットする。
-
-```
-yarn run build
-git add -A
-```
-
-## Docker for Windows
-
-### ２回目以降
-
-プロジェクトのディレクトリに移動してから下記のコマンドを実行する。
-
-```
-cd laradock
-docker-compose up -d nginx mysql workspace
-```
-
-phpとcomposerを使用する際は下記のコマンドを実行する。
-
-```
-docker-compose exec --user=laradock workspace bash
-```
-
-### フロントエンドの開発
-
-フロントエンドのディレクトリに移動して作業する。
-
-#### 開発サーバの起動
-
-下記のコマンドを実行して [http://localhost:8080](http://localhost:8080) にアクセスする。
-
-```
-yarn run serve
-```
-
-#### コードの整形
-
-下記のコマンドを実行する。
-
-```
-yarn run lint
-```
-
-#### Gitのコミット前に
-
-プロジェクトをビルドしてからコミットする。
-
-```
-yarn run build
-git add -A
+```sh
+ssh -fNCL 0.0.0.0:8080:localhost:8080 docker@192.168.99.100
+# docker@192.168.99.100's password: tcuser
 ```

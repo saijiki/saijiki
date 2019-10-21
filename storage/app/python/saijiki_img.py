@@ -1,38 +1,86 @@
-import datetime
+from datetime import datetime
 import io
 import sys
 
 from PIL import Image, ImageDraw, ImageFont
-from saijiki_txt import draw_text
 
-# 標準入力の文字コードを明示する
+######## 初期設定 ########
+
+# 標準入力の文字コードを明示
 sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='UTF-8')
 
-######## 変数宣言 ########
+######## 定数宣言 ########
 
-# python3 saijiki_img.py '' ←のテキストを取得
-TARGET_STRING = sys.argv[1]
+# コマンドライン引数
+TARGET_SENTENCE_1 = sys.argv[1] # 初句
+TARGET_SENTENCE_2 = sys.argv[2] # 二句
+TARGET_SENTENCE_3 = sys.argv[3] # 結句
 
-# Fontファイルまでのパス
-FONT_FILE_PATH = "Hannari_verticalFont.otf"
+# フォントファイルのパス
+FONT_FILE_PATH = 'vertical_fonts/hannari.otf'
 
-# 合成画像出力のファイルパス
-OUTPUT_FILE_NAME = '{0:%Y%m%d%H%M%S}.png'.format(datetime.datetime.now())
-OUTPUT_FILE_PATH = '../public/{0}'.format(OUTPUT_FILE_NAME)
+# フォントサイズ
+FONT_SIZE = 60
 
-image_data = Image.new('RGB', (540,600),(255,255,255))
-image_data.putalpha(0)
+# 画像の横幅
+IMAGE_WIDTH = 540
 
-# 文字合成
-img_width,img_height = image_data.size
-font_size = 70
-draw_start_x = img_width - 200
-draw_start_y = 30
+# 画像の縦幅
+IMAGE_HEIGHT = 600
 
-# saijiki_txt.py から呼び出し
-draw_text(image_data, font_size, FONT_FILE_PATH, TARGET_STRING, draw_start_x, draw_start_y)
+# 画像の余白
+IMAGE_MARGIN = 30
 
-# 合成した画像の保存
-image_data.save(OUTPUT_FILE_PATH)
+# 合成画像の出力先ファイル名 (現在日時.png)
+OUTPUT_FILE_NAME = f'{datetime.now():%Y%m%d%H%M%S%f}.png'
 
+######## 画像生成 ########
+
+# 透過背景の画像を生成
+image = Image.new('RGB', (IMAGE_WIDTH, IMAGE_HEIGHT), 'white')
+image.putalpha(0)
+
+# フォントデータを取得
+font = ImageFont.truetype(font=FONT_FILE_PATH, size=FONT_SIZE)
+
+# 各句の縦幅を計算
+sentence_1_heights = [font.getsize(char)[-1] for char in TARGET_SENTENCE_1]
+sentence_2_heights = [font.getsize(char)[-1] for char in TARGET_SENTENCE_2]
+sentence_3_heights = [font.getsize(char)[-1] for char in TARGET_SENTENCE_3]
+
+# 各句のＸ軸を計算
+sentence_1_x = ((IMAGE_WIDTH - FONT_SIZE * 3) / 4) * 3 + FONT_SIZE * 2 # 初句 (行間 * 3 + フォントサイズ * 2)
+sentence_2_x = ((IMAGE_WIDTH - FONT_SIZE * 3) / 4) * 2 + FONT_SIZE * 1 # 二句 (行間 * 2 + フォントサイズ * 1)
+sentence_3_x = ((IMAGE_WIDTH - FONT_SIZE * 3) / 4) * 1 + FONT_SIZE * 0 # 結句 (行間 * 1 + フォントサイズ * 0)
+
+# 各句のＹ軸を計算 (句の開始位置)
+sentence_1_y = (               IMAGE_MARGIN                          )     # 初句は上寄せ
+sentence_2_y = (IMAGE_HEIGHT                - sum(sentence_2_heights)) / 2 # 二句は中央寄せ
+sentence_3_y = (IMAGE_HEIGHT - IMAGE_MARGIN - sum(sentence_3_heights))     # 結句は下寄せ
+
+# 描画用のデータを取得
+draw = ImageDraw.Draw(image)
+
+# 初句を描画 (三重描画で太字にする)
+for i, char in enumerate(TARGET_SENTENCE_1):
+    draw.text((sentence_1_x - 1, sentence_1_y + sum(sentence_1_heights[:i]) - 1), char, fill='black', font=font)
+    draw.text((sentence_1_x    , sentence_1_y + sum(sentence_1_heights[:i])    ), char, fill='black', font=font)
+    draw.text((sentence_1_x + 1, sentence_1_y + sum(sentence_1_heights[:i]) + 1), char, fill='black', font=font)
+
+# 二句を描画 (三重描画で太字にする)
+for i, char in enumerate(TARGET_SENTENCE_2):
+    draw.text((sentence_2_x - 1, sentence_2_y + sum(sentence_2_heights[:i]) - 1), char, fill='black', font=font)
+    draw.text((sentence_2_x    , sentence_2_y + sum(sentence_2_heights[:i])    ), char, fill='black', font=font)
+    draw.text((sentence_2_x + 1, sentence_2_y + sum(sentence_2_heights[:i]) + 1), char, fill='black', font=font)
+
+# 結句を描画 (三重描画で太字にする)
+for i, char in enumerate(TARGET_SENTENCE_3):
+    draw.text((sentence_3_x - 1, sentence_3_y + sum(sentence_3_heights[:i]) - 1), char, fill='black', font=font)
+    draw.text((sentence_3_x    , sentence_3_y + sum(sentence_3_heights[:i])    ), char, fill='black', font=font)
+    draw.text((sentence_3_x + 1, sentence_3_y + sum(sentence_3_heights[:i]) + 1), char, fill='black', font=font)
+
+# 合成画像を出力
+image.save(f'../public/{OUTPUT_FILE_NAME}')
+
+# 合成画像の出力先ファイル名を出力
 print(OUTPUT_FILE_NAME, end='')

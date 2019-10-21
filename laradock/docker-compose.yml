@@ -121,6 +121,7 @@ services:
           - INSTALL_POWERLINE=${WORKSPACE_INSTALL_POWERLINE}
           - INSTALL_FFMPEG=${WORKSPACE_INSTALL_FFMPEG}
           - INSTALL_GNU_PARALLEL=${WORKSPACE_INSTALL_GNU_PARALLEL}
+          - INSTALL_MECAB=${WORKSPACE_INSTALL_MECAB}
           - http_proxy
           - https_proxy
           - no_proxy
@@ -130,6 +131,7 @@ services:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
         - "${WORKSPACE_SSH_PORT}:22"
+        - "8080:8080"
       tty: true
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
@@ -161,6 +163,7 @@ services:
           - INSTALL_BCMATH=${PHP_FPM_INSTALL_BCMATH}
           - INSTALL_GMP=${PHP_FPM_INSTALL_GMP}
           - INSTALL_PHPREDIS=${PHP_FPM_INSTALL_PHPREDIS}
+          - INSTALL_PILLOW=${PHP_FPM_INSTALL_PILLOW}
           - INSTALL_MEMCACHED=${PHP_FPM_INSTALL_MEMCACHED}
           - INSTALL_OPCACHE=${PHP_FPM_INSTALL_OPCACHE}
           - INSTALL_EXIF=${PHP_FPM_INSTALL_EXIF}
@@ -190,8 +193,6 @@ services:
           - ADDITIONAL_LOCALES=${PHP_FPM_ADDITIONAL_LOCALES}
           - INSTALL_FFMPEG=${PHP_FPM_FFMPEG}
           - INSTALL_XHPROF=${PHP_FPM_INSTALL_XHPROF}
-          - INSTALL_PILLOW=${PHP_FPM_INSTALL_PILLOW}
-          - INSTALL_MECAB=${PHP_FPM_INSTALL_MECAB}
           - http_proxy
           - https_proxy
           - no_proxy
