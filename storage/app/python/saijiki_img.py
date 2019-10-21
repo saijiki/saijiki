@@ -17,7 +17,7 @@ TARGET_SENTENCE_2 = sys.argv[2] # 二句
 TARGET_SENTENCE_3 = sys.argv[3] # 結句
 
 # フォントファイルのパス
-FONT_FILE_PATH = 'vertical_fonts/hannari.otf'
+FONT_FILE_PATH = 'vertical_fonts/aoyagireisho.ttf'
 
 # フォントサイズ
 FONT_SIZE = 60
@@ -43,10 +43,20 @@ image.putalpha(0)
 # フォントデータを取得
 font = ImageFont.truetype(font=FONT_FILE_PATH, size=FONT_SIZE)
 
-# 各句の縦幅を計算
-sentence_1_heights = [font.getsize(char)[-1] for char in TARGET_SENTENCE_1]
-sentence_2_heights = [font.getsize(char)[-1] for char in TARGET_SENTENCE_2]
-sentence_3_heights = [font.getsize(char)[-1] for char in TARGET_SENTENCE_3]
+# 各句の横幅と縦幅を計算
+sentence_1_sizes = [font.getsize(char) for char in TARGET_SENTENCE_1]
+sentence_2_sizes = [font.getsize(char) for char in TARGET_SENTENCE_2]
+sentence_3_sizes = [font.getsize(char) for char in TARGET_SENTENCE_3]
+
+# 各句の横幅を取得
+sentence_1_widths = [size[0] for size in sentence_1_sizes]
+sentence_2_widths = [size[0] for size in sentence_2_sizes]
+sentence_3_widths = [size[0] for size in sentence_3_sizes]
+
+# 各句の縦幅を取得
+sentence_1_heights = [size[1] for size in sentence_1_sizes]
+sentence_2_heights = [size[1] for size in sentence_2_sizes]
+sentence_3_heights = [size[1] for size in sentence_3_sizes]
 
 # 各句のＸ軸を計算
 sentence_1_x = ((IMAGE_WIDTH - FONT_SIZE * 3) / 4) * 3 + FONT_SIZE * 2 # 初句 (行間 * 3 + フォントサイズ * 2)
@@ -63,21 +73,21 @@ draw = ImageDraw.Draw(image)
 
 # 初句を描画 (三重描画で太字にする)
 for i, char in enumerate(TARGET_SENTENCE_1):
-    draw.text((sentence_1_x - 1, sentence_1_y + sum(sentence_1_heights[:i]) - 1), char, fill='black', font=font)
-    draw.text((sentence_1_x    , sentence_1_y + sum(sentence_1_heights[:i])    ), char, fill='black', font=font)
-    draw.text((sentence_1_x + 1, sentence_1_y + sum(sentence_1_heights[:i]) + 1), char, fill='black', font=font)
+    draw.text((sentence_1_x + (FONT_SIZE - sentence_1_widths[i]) / 2 - 1, sentence_1_y + sum(sentence_1_heights[:i]) - 1), char, fill='black', font=font)
+    draw.text((sentence_1_x + (FONT_SIZE - sentence_1_widths[i]) / 2    , sentence_1_y + sum(sentence_1_heights[:i])    ), char, fill='black', font=font)
+    draw.text((sentence_1_x + (FONT_SIZE - sentence_1_widths[i]) / 2 + 1, sentence_1_y + sum(sentence_1_heights[:i]) + 1), char, fill='black', font=font)
 
 # 二句を描画 (三重描画で太字にする)
 for i, char in enumerate(TARGET_SENTENCE_2):
-    draw.text((sentence_2_x - 1, sentence_2_y + sum(sentence_2_heights[:i]) - 1), char, fill='black', font=font)
-    draw.text((sentence_2_x    , sentence_2_y + sum(sentence_2_heights[:i])    ), char, fill='black', font=font)
-    draw.text((sentence_2_x + 1, sentence_2_y + sum(sentence_2_heights[:i]) + 1), char, fill='black', font=font)
+    draw.text((sentence_2_x + (FONT_SIZE - sentence_2_widths[i]) / 2 - 1, sentence_2_y + sum(sentence_2_heights[:i]) - 1), char, fill='black', font=font)
+    draw.text((sentence_2_x + (FONT_SIZE - sentence_2_widths[i]) / 2    , sentence_2_y + sum(sentence_2_heights[:i])    ), char, fill='black', font=font)
+    draw.text((sentence_2_x + (FONT_SIZE - sentence_2_widths[i]) / 2 + 1, sentence_2_y + sum(sentence_2_heights[:i]) + 1), char, fill='black', font=font)
 
 # 結句を描画 (三重描画で太字にする)
 for i, char in enumerate(TARGET_SENTENCE_3):
-    draw.text((sentence_3_x - 1, sentence_3_y + sum(sentence_3_heights[:i]) - 1), char, fill='black', font=font)
-    draw.text((sentence_3_x    , sentence_3_y + sum(sentence_3_heights[:i])    ), char, fill='black', font=font)
-    draw.text((sentence_3_x + 1, sentence_3_y + sum(sentence_3_heights[:i]) + 1), char, fill='black', font=font)
+    draw.text((sentence_3_x + (FONT_SIZE - sentence_3_widths[i]) / 2 - 1, sentence_3_y + sum(sentence_3_heights[:i]) - 1), char, fill='black', font=font)
+    draw.text((sentence_3_x + (FONT_SIZE - sentence_3_widths[i]) / 2    , sentence_3_y + sum(sentence_3_heights[:i])    ), char, fill='black', font=font)
+    draw.text((sentence_3_x + (FONT_SIZE - sentence_3_widths[i]) / 2 + 1, sentence_3_y + sum(sentence_3_heights[:i]) + 1), char, fill='black', font=font)
 
 # 合成画像を出力
 image.save(f'../public/{OUTPUT_FILE_NAME}')
