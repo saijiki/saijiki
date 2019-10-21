@@ -1,17 +1,24 @@
 <template>
     <div class="senryucard">
-        <Card />
+        <Card :path="data.path" />
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 import Card from '@/components/Card';
 
 export default {
     components: { Card },
+    props: ['id'],
     data: () => ({
-        dialog: false,
+        data: {},
     }),
+    created() {
+      axios.get(`/api/senryus/${this.id}`).then(({ data }) => {
+          this.data = data;
+      });
+    },
 };
 </script>
 

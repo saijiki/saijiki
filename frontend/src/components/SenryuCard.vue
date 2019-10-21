@@ -1,5 +1,5 @@
 <template>
-    <router-link :to="{ name: 'SenryuDetails' }">
+    <router-link :to="{ name: 'SenryuDetails', params: { id } }">
         <!-- カードのサイズ -->
         <flipper
             class="Card"
@@ -24,7 +24,7 @@ import Flipper from 'vue-flipper';
 
 export default {
     components: { Flipper },
-    props: ['path'],
+    props: ['id', 'path'],
     data: () => ({ isFlipped: false }),
     //date渡す
 };
