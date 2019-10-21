@@ -437,6 +437,18 @@ RUN if [ ${INSTALL_CASSANDRA} = true ]; then \
 ;fi
 
 ###########################################################################
+# Gearman:
+###########################################################################
+
+ARG INSTALL_GEARMAN=false
+
+RUN if [ ${INSTALL_GEARMAN} = true ]; then \
+    add-apt-repository -y ppa:ondrej/pkg-gearman && \
+    apt-get update && \
+    apt-get install php-gearman -y  \
+;fi
+
+###########################################################################
 # PHP REDIS EXTENSION
 ###########################################################################
 
@@ -1088,6 +1100,16 @@ RUN if [ ${INSTALL_FFMPEG} = true ]; then \
 ;fi
 
 ###########################################################################
+# Mailparse extension:
+###########################################################################
+
+ARG INSTALL_MAILPARSE=false
+
+RUN if [ ${INSTALL_MAILPARSE} = true ]; then \
+    apt-get install -yqq php-mailparse \
+;fi
+
+###########################################################################
 # GNU Parallel:
 ###########################################################################
 
@@ -1124,9 +1146,8 @@ RUN if [ ${INSTALL_MECAB} = true ]; then \
         && make install \
     ) \
     && rm -r php-mecab \
+    && echo 'extension=mecab.so' > /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/mecab.ini \
 ;fi
-
-COPY ./mecab.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d
 
 ###########################################################################
 # Check PHP version:
