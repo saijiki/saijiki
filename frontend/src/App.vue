@@ -1,8 +1,9 @@
 <template>
     <v-app>
-        <v-app-bar absolute app color="transparent" dark flat>
+        <v-app-bar absolute app color="transparent" dark flat height="68">
             <v-btn
                 class="ma-2 pink"
+                exact
                 icon
                 large
                 :ripple="false"
@@ -14,6 +15,7 @@
             </v-btn>
             <v-btn
                 class="ma-2 green"
+                exact
                 icon
                 large
                 :ripple="false"
@@ -101,6 +103,7 @@ export default {
 .v-content {
     background-image: url('~@/assets/background.png');
     background-repeat: no-repeat;
+    background-attachment: fixed;
     background-position: left center;
     background-size: cover;
 }

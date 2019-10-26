@@ -7,6 +7,7 @@
                     v-model="keyword"
                     dense
                     flat
+                    hide-details
                     label="キーワード"
                     outlined
                     rounded
@@ -69,8 +70,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
     data: () => ({
         imageFileObj: null,
@@ -107,7 +106,7 @@ export default {
             this.isLoading = true;
 
             try {
-                const { data } = await axios.post('api/senryus', {
+                const { data } = await this.$axios.post('api/senryus', {
                     keyword: this.keyword,
                 });
 
@@ -129,7 +128,7 @@ export default {
 
 <style lang="scss" scoped>
 .layout {
-    min-height: 594px;
+    min-height: 568px;
 }
 
 .logo {

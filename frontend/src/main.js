@@ -3,6 +3,7 @@ import App from '@/App';
 import router from '@/router';
 import store from '@/store';
 import vuetify from '@/vuetify';
+import '@/plugins/axios';
 import '@/plugins/vue-flipper';
 import '@/plugins/vue-progress-path';
 
