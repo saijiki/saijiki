@@ -1,4 +1,4 @@
-# saijiki
+# Saijiki
 
 ## Project setup
 ```
