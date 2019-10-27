@@ -16,6 +16,7 @@ export default new Router({
             path: '/senryus/:id(\\d+)',
             name: 'SenryuDetail',
             component: () => import('@/views/SenryuDetail'),
+            props: true,
         },
         {
             path: '/senryus',

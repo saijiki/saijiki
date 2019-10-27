@@ -30,14 +30,7 @@
                         </v-col>
                     </v-row>
                 </v-col>
-                <v-col
-                    offset="0"
-                    cols="12"
-                    offset-md="0"
-                    md="6"
-                    offset-lg="4"
-                    lg="4"
-                >
+                <v-col cols="12" md="6" offset-lg="4" lg="4">
                     <v-text-field
                         class="mx-auto"
                         append-icon="fas fa-search"
@@ -105,7 +98,7 @@ export default {
             this.isLoading = true;
 
             try {
-                const { data } = await this.$axios.get('api/senryus', {
+                const { data } = await this.$axios.get('/api/senryus', {
                     params: {
                         page: this.page,
                     },

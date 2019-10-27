@@ -1,5 +1,5 @@
 <template>
-    <v-container fill-height fluid>
+    <v-container fill-height>
         <v-layout align-center column justify-center>
             <img class="logo" src="@/assets/logo.png" width="256" />
             <v-form @submit.prevent="onSubmit">
@@ -106,7 +106,7 @@ export default {
             this.isLoading = true;
 
             try {
-                const { data } = await this.$axios.post('api/senryus', {
+                const { data } = await this.$axios.post('/api/senryus', {
                     keyword: this.keyword,
                 });
 
