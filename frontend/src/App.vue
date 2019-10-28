@@ -42,32 +42,41 @@
                 </template>
                 <v-card>
                     <v-card-title class="headline">
-                        サイトの使い方
+                        サイトについて
                     </v-card-title>
                     <v-card-text class="pb-0">
                         <v-stepper class="pb-0 elevation-0" non-linear vertical>
                             <v-stepper-step editable step="1">
-                                Step 1
+                              Saijikiとは
                             </v-stepper-step>
                             <v-stepper-content step="1">
                                 <p>
-                                    Step 1
+                                    キーワードや写真から川柳を生成します
                                 </p>
                             </v-stepper-content>
                             <v-stepper-step editable step="2">
-                                Step 2
+                              川柳を作る
                             </v-stepper-step>
                             <v-stepper-content step="2">
                                 <p>
-                                    Step 2
+                                    ・キーワード欄に単語を入れて生成します<br>
+                                    ・
+                                    <v-icon>
+                                        fas fa-camera
+                                    </v-icon>
+                                    から写真をアップロードします
                                 </p>
                             </v-stepper-content>
                             <v-stepper-step editable step="3">
-                                Step 3
+                                川柳を評価する
                             </v-stepper-step>
                             <v-stepper-content step="3">
                                 <p>
-                                    Step 3
+                                  良い句には
+                                  <v-icon>
+                                      far fa-thumbs-up
+                                  </v-icon>
+                                  を押す
                                 </p>
                             </v-stepper-content>
                         </v-stepper>

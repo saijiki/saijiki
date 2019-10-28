@@ -87,7 +87,7 @@
                                                     </v-list-item-title>
                                                 </v-list-item-content>
                                             </v-list-item>
-                                            <v-list-item @click="() => {}">
+                                            <v-list-item @click="copy">
                                                 <v-list-item-icon>
                                                     <v-icon>
                                                         fas fa-link
@@ -130,6 +130,15 @@
                 </template>
             </flipper>
         </v-layout>
+        <!-- Snackbars -->
+        <v-snackbar
+      v-model="snackbar"
+      color="success"
+    >
+      <strong>
+        コピーしました
+      </strong>
+    </v-snackbar>
     </v-container>
 </template>
 
@@ -141,6 +150,7 @@ export default {
         isShareDialogVisible: false,
         isLoading: true,
         senryu: {},
+        snackbar: false,
     }),
     created() {
         this.getSenryu();
@@ -161,8 +171,25 @@ export default {
                 this.isLoading = false;
             }
         },
+        copy() {
+          const textarea = document.createElement('textarea');
+          textarea.setAttribute('id', 'copyTarget');
+          textarea.setAttribute('style', 'position:absolute; left:-9999px; top:0px;');
+          textarea.setAttribute('readonly', 'readonly');
+          textarea.appendChild(document.createTextNode(location.href));
+          document.body.appendChild(textarea);
+          let obj = document.getElementById("copyTarget");
+          let range = document.createRange();
+          range.selectNode(obj);
+          window.getSelection().addRange(range);
+          document.execCommand('copy');
+          //Snackbars
+          this.snackbar = true;
+
+        },
     },
 };
+
 </script>
 
 <style lang="scss" scoped>
