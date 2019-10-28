@@ -1,7 +1,7 @@
 <template>
     <v-container fill-height>
         <v-layout align-center column justify-center>
-            <img class="logo" src="@/assets/logo.png" width="256" />
+            <img class="logo" src="@/assets/logo.png" width="256" @click="playSound" />
             <v-form @submit.prevent="onSubmit">
                 <v-text-field
                     v-model="keyword"
@@ -66,6 +66,10 @@
                 :style="{ transform: 'scale(0.5)' }"
             />
         </v-overlay>
+        <!-- 効果音 -->
+        <audio id="sound-file" preload="auto">
+	         <source src="@/assets/oji.wav" type="audio/wav">
+        </audio>
     </v-container>
 </template>
 
@@ -122,6 +126,9 @@ export default {
                 this.isLoading = false;
             }
         },
+        playSound() {
+          document.getElementById('sound-file').play();
+        },
     },
 };
 </script>
@@ -134,6 +141,7 @@ export default {
 .logo {
     margin-top: -264px;
     margin-bottom: 8px;
+    cursor: pointer;
 }
 
 ::v-deep .v-text-field--outlined fieldset {
