@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
 
 Vue.use(Router);
 
@@ -9,37 +8,20 @@ export default new Router({
     base: process.env.BASE_URL,
     routes: [
         {
-            path: '/senryudetails/:id',
-            name: 'SenryuDetails',
-            props: true,
-            component: () =>
-                import(
-                    /* webpackChunkName: "about" */ './views/SenryuDetails.vue'
-                ),
-        },
-        {
-            path: '/senryurank',
-            name: 'SenryuRank',
-            component: () =>
-                import(
-                    /* webpackChunkName: "about" */ './views/SenryuRank.vue'
-                ),
-        },
-        {
             path: '/',
-            name: 'home',
-            component: Home,
+            name: 'Home',
+            component: () => import('@/views/Home'),
         },
         {
-            path: '/senryu-list',
-            name: 'SenryuList',
-            // route level code-splitting
-            // this generates a separate chunk (about.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () =>
-                import(
-                    /* webpackChunkName: "about" */ './views/SenryuList.vue'
-                ),
+            path: '/senryus/:id(\\d+)',
+            name: 'SenryuDetail',
+            component: () => import('@/views/SenryuDetail'),
+            props: true,
+        },
+        {
+            path: '/senryus',
+            name: 'Senryus',
+            component: () => import('@/views/Senryus'),
         },
     ],
 });

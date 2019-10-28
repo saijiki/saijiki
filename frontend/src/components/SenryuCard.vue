@@ -1,75 +1,29 @@
 <template>
-    <router-link :to="{ name: 'SenryuDetails', params: { id } }">
-        <!-- カードのサイズ -->
-        <flipper
-            class="Card"
-            width="324px"
-            height="360px"
-            @click="isFlipped = !isFlipped"
-        >
-            <!-- カードの中身 -->
-            <div
-                class="Card__face"
-                :style="{ backgroundImage: `url('${path}')` }"
-                slot="front"
-            >
-                <!-- 川柳が入る -->
-            </div>
-        </flipper>
-    </router-link>
+    <v-card
+        class="mx-auto"
+        color="white"
+        exact
+        height="400"
+        :img="senryu.path"
+        raised
+        :ripple="false"
+        :to="{ name: 'SenryuDetail', params: { id: senryu.id } }"
+        width="360"
+    />
 </template>
 
 <script>
-import Flipper from 'vue-flipper';
-
 export default {
-    components: { Flipper },
-    props: ['id', 'path'],
-    data: () => ({ isFlipped: false }),
-    //date渡す
+    props: { senryu: Object },
 };
 </script>
 
-<style src="vue-flipper/dist/vue-flipper.css" />
-
 <style lang="scss" scoped>
-.Card {
-    background-color: #fff;
-    border-radius: 20px;
+.v-card {
+    border: 3px solid green !important;
+}
 
-    &__face,
-    &__pattern {
-        width: 100%;
-        height: 100%;
-        border-radius: 20px;
-        box-shadow: 0 3px 15px rgba(#000, 0.45);
-        cursor: pointer;
-    }
-    // カード表面
-    &__face {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 100%;
-        padding: 15px;
-        background-size: 100% 100%;
-        margin-bottom: 20px;
-        border: solid 3px #008000;
-    }
-    &__value {
-        display: block;
-        font-size: 18pt;
-        &--top {
-            align-self: flex-start;
-        }
-        &--bottom {
-            align-self: flex-end;
-        }
-    }
-    &__center {
-        display: block;
-        font-size: 32pt;
-        align-self: center;
-    }
+.v-card:not(.v-sheet--tile):not(.v-card--shaped) {
+    border-radius: 16px;
 }
 </style>
