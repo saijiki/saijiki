@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Arr;
 use Symfony\Component\Process\Process;
 
 class Senryu extends Model
@@ -65,7 +64,7 @@ class Senryu extends Model
      */
     private static function generateSentence(int $chars, array $morphemes, array $keywords)
     {
-        if (!Arr::has($keywords, 'prev') || !Arr::has($keywords, 'next')) {
+        if (!\Arr::has($keywords, 'prev') || !\Arr::has($keywords, 'next')) {
             $keywords = [
                 'prev' => $keywords,
                 'next' => $keywords,
@@ -77,9 +76,9 @@ class Senryu extends Model
 
         while (true) {
             if (isset($morpheme)) {
-                $morpheme = $morphemes[Arr::random($morpheme['next'])];
+                $morpheme = $morphemes[\Arr::random($morpheme['next'])];
             } else {
-                $morpheme = $morphemes[Arr::random($keywords['next'])];
+                $morpheme = $morphemes[\Arr::random($keywords['next'])];
             }
 
             if (self::calcMora($reading) + self::calcMora($morpheme['reading']) > $chars) {
@@ -94,7 +93,7 @@ class Senryu extends Model
             }
         }
 
-        return ['body' => $surface, 'keywords' => Arr::only($morpheme, ['prev', 'next'])];
+        return ['body' => $surface, 'keywords' => \Arr::only($morpheme, ['prev', 'next'])];
     }
 
     /**

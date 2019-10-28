@@ -68,14 +68,14 @@ class GenerateMorphemes extends Command
                     continue;
                 }
 
-                if (!array_key_exists($surface, $result)) {
+                if (!\Arr::has($result, $surface)) {
                     $result[$surface] = array_merge(compact('surface', 'reading', 'part_of_speech'), [
                         'prev' => [],
                         'next' => [],
                     ]);
                 }
 
-                while (($node = $node->getPrev()) && !array_key_exists($node->getSurface(), $result));
+                while (($node = $node->getPrev()) && !\Arr::has($result, $node->getSurface()));
 
                 if ($node) {
                     if (!in_array($surface, $result[$node->getSurface()]['next'], true)) {
