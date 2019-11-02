@@ -5,7 +5,7 @@
                 v-if="isLoading"
                 height="600"
                 tile
-                type="image,image,image"
+                type="image@3"
                 width="540"
             />
             <flipper
@@ -144,11 +144,13 @@
 
 <script>
 export default {
-    props: { id: [String, Number] },
+    props: {
+        id: { type: Number },
+    },
     data: () => ({
         isFlipped: false,
+        isLoading: false,
         isShareDialogVisible: false,
-        isLoading: true,
         senryu: {},
         snackbar: false,
     }),

@@ -14,7 +14,9 @@
 
 <script>
 export default {
-    props: { senryu: Object },
+    props: {
+        senryu: { type: Object },
+    },
 };
 </script>
 

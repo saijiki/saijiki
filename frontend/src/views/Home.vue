@@ -74,8 +74,8 @@ export default {
     data: () => ({
         imageFileObj: null,
         imageFileUrl: null,
-        isUploadDialogVisible: false,
         isLoading: false,
+        isUploadDialogVisible: false,
         keyword: '',
     }),
     methods: {

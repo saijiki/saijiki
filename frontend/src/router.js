@@ -16,12 +16,15 @@ export default new Router({
             path: '/senryus/:id(\\d+)',
             name: 'SenryuDetail',
             component: () => import('@/views/SenryuDetail'),
-            props: true,
+            props: ({ params: { id } }) => ({ id: id | 0 }),
         },
         {
             path: '/senryus',
             name: 'Senryus',
             component: () => import('@/views/Senryus'),
+            props: ({ query: { page } }) => ({
+                page: page > 1 ? page | 0 : 1,
+            }),
         },
     ],
 });
