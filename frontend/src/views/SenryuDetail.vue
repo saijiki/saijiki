@@ -20,102 +20,40 @@
                         color="white"
                         height="600"
                         :img="senryu.path"
+                        raised
                         tag="a"
                         width="540"
                     >
-                        <v-layout align-end fill-height>
-                            <v-layout justify-end @click.stop>
-                                <v-btn
-                                    class="mr-4"
-                                    color="deep-orange"
-                                    icon
-                                    large
-                                    :ripple="false"
-                                    @click="() => {}"
-                                >
-                                    <v-badge color="deep-orange">
-                                        <template #badge>
-                                            {{ senryu.good }}
-                                        </template>
-                                        <v-icon>
-                                            far fa-thumbs-up
-                                        </v-icon>
-                                    </v-badge>
-                                </v-btn>
-                                <v-dialog
-                                    v-model="isShareDialogVisible"
-                                    width="288"
-                                >
-                                    <template #activator="{ on }">
-                                        <v-btn
-                                            icon
-                                            large
-                                            :ripple="false"
-                                            v-on="on"
-                                        >
-                                            <v-icon>
-                                                fas fa-share
-                                            </v-icon>
-                                        </v-btn>
+                        <v-layout align-end fill-height justify-end>
+                            <v-btn
+                                class="mr-4 mb-1"
+                                color="deep-orange"
+                                icon
+                                large
+                                :ripple="false"
+                                @click.stop="senryu.good++"
+                            >
+                                <v-badge color="deep-orange">
+                                    <template #badge>
+                                        {{ senryu.good }}
                                     </template>
-                                    <v-card>
-                                        <v-list subheader>
-                                            <v-subheader>
-                                                シェアする
-                                            </v-subheader>
-                                            <v-list-item @click="() => {}">
-                                                <v-list-item-icon>
-                                                    <v-icon>
-                                                        fab fa-facebook-square
-                                                    </v-icon>
-                                                </v-list-item-icon>
-                                                <v-list-item-content>
-                                                    <v-list-item-title>
-                                                        Facebookでシェアする
-                                                    </v-list-item-title>
-                                                </v-list-item-content>
-                                            </v-list-item>
-                                            <v-list-item @click="() => {}">
-                                                <v-list-item-icon>
-                                                    <v-icon>
-                                                        fab fa-twitter-square
-                                                    </v-icon>
-                                                </v-list-item-icon>
-                                                <v-list-item-content>
-                                                    <v-list-item-title>
-                                                        Twitterでシェアする
-                                                    </v-list-item-title>
-                                                </v-list-item-content>
-                                            </v-list-item>
-                                            <v-list-item @click="copy">
-                                                <v-list-item-icon>
-                                                    <v-icon>
-                                                        fas fa-link
-                                                    </v-icon>
-                                                </v-list-item-icon>
-                                                <v-list-item-content>
-                                                    <v-list-item-title>
-                                                        リンクをコピーする
-                                                    </v-list-item-title>
-                                                </v-list-item-content>
-                                            </v-list-item>
-                                        </v-list>
-                                        <v-divider />
-                                        <v-card-actions>
-                                            <v-spacer />
-                                            <v-btn
-                                                color="primary"
-                                                text
-                                                @click="
-                                                    isShareDialogVisible = false
-                                                "
-                                            >
-                                                キャンセル
-                                            </v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
-                            </v-layout>
+                                    <v-icon>
+                                        far fa-thumbs-up
+                                    </v-icon>
+                                </v-badge>
+                            </v-btn>
+                            <v-btn
+                                class="mr-2 mb-1"
+                                color="grey darken-3"
+                                icon
+                                large
+                                :ripple="false"
+                                @click.stop="isShareDialogVisible = true"
+                            >
+                                <v-icon>
+                                    fas fa-share
+                                </v-icon>
+                            </v-btn>
                         </v-layout>
                     </v-card>
                 </template>
@@ -124,21 +62,72 @@
                         color="white"
                         height="600"
                         :img="require('@/assets/logo.png')"
+                        raised
                         tag="a"
                         width="540"
                     />
                 </template>
             </flipper>
         </v-layout>
-        <!-- Snackbars -->
-        <v-snackbar
-      v-model="snackbar"
-      color="success"
-    >
-      <strong>
-        コピーしました
-      </strong>
-    </v-snackbar>
+        <v-dialog v-model="isShareDialogVisible" width="288">
+            <v-card>
+                <v-list subheader>
+                    <v-subheader>
+                        シェアする
+                    </v-subheader>
+                    <v-list-item @click="() => {}">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fab fa-facebook-square
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                Facebookでシェアする
+                            </v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="() => {}">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fab fa-twitter-square
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                Twitterでシェアする
+                            </v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="copyUrl">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fas fa-link
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                リンクをコピーする
+                            </v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+                <v-divider />
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                        color="primary"
+                        text
+                        @click="isShareDialogVisible = false"
+                    >
+                        キャンセル
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-snackbar v-model="isCopySnackbarVisible" color="success">
+            コピーしました。
+        </v-snackbar>
     </v-container>
 </template>
 
@@ -148,11 +137,11 @@ export default {
         id: { type: Number },
     },
     data: () => ({
+        isCopySnackbarVisible: false,
         isFlipped: false,
         isLoading: false,
         isShareDialogVisible: false,
         senryu: {},
-        snackbar: false,
     }),
     created() {
         this.getSenryu();
@@ -173,25 +162,36 @@ export default {
                 this.isLoading = false;
             }
         },
-        copy() {
-          const textarea = document.createElement('textarea');
-          textarea.setAttribute('id', 'copyTarget');
-          textarea.setAttribute('style', 'position:absolute; left:-9999px; top:0px;');
-          textarea.setAttribute('readonly', 'readonly');
-          textarea.appendChild(document.createTextNode(location.href));
-          document.body.appendChild(textarea);
-          let obj = document.getElementById("copyTarget");
-          let range = document.createRange();
-          range.selectNode(obj);
-          window.getSelection().addRange(range);
-          document.execCommand('copy');
-          //Snackbars
-          this.snackbar = true;
+        async copyUrl() {
+            const url = `${location.origin}${location.pathname}`;
 
+            (() => {
+                // IE
+                if (window.clipboardData) {
+                    window.clipboardData.setData('Text', url);
+                    return;
+                }
+
+                // Chrome, Firefox & Opera
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url);
+                    return;
+                }
+
+                // Others
+                document.addEventListener('copy', function listener(e) {
+                    this.removeEventListener(e.type, listener);
+                    e.clipboardData.setData('text/plain', url);
+                    e.preventDefault();
+                });
+                document.execCommand('copy');
+            })();
+
+            this.isCopySnackbarVisible = true;
+            this.isShareDialogVisible = false;
         },
     },
 };
-
 </script>
 
 <style lang="scss" scoped>
@@ -201,5 +201,13 @@ export default {
 
 .Flipper .v-card:not(.v-sheet--tile):not(.v-card--shaped) {
     border-radius: 16px;
+}
+
+::v-deep .v-skeleton-loader__bone:nth-child(1) {
+    border-radius: 16px 16px 0 0;
+}
+
+::v-deep .v-skeleton-loader__bone:nth-child(3) {
+    border-radius: 0 0 16px 16px;
 }
 </style>

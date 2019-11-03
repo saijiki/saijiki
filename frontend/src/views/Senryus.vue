@@ -96,12 +96,11 @@ export default {
                 return this.page;
             },
             set(page) {
-                if (page === this.page) {
+                if (page == this.$route.query.page) {
                     this.getSenryus();
-                    return;
+                } else {
+                    this.$router.push({ query: { page } });
                 }
-
-                this.$router.push({ query: { page } });
             },
         },
     },
@@ -138,3 +137,13 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-skeleton-loader__bone:nth-child(1) {
+    border-radius: 16px 16px 0 0;
+}
+
+::v-deep .v-skeleton-loader__bone:nth-child(2) {
+    border-radius: 0 0 16px 16px;
+}
+</style>
