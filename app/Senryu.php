@@ -43,27 +43,17 @@ class Senryu extends Model
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
-        // TODO: 整形する
-        while (true) {
-            list('keywords' => $keywords, 'surface' => $sentence_1) = self::generateSentence(5, $morphemes, $keywords);
-
+        for ($i = 0, $j = 1; $i < 3; $i++, $j++) {
             try {
-                while (true) {
-                    list('keywords' => $keywords, 'surface' => $sentence_2) = self::generateSentence(7, $morphemes, $keywords);
-
-                    try {
-                        list('keywords' => $keywords, 'surface' => $sentence_3) = self::generateSentence(5, $morphemes, $keywords);
-                    } catch (\Exception $e) {
-                        continue;
-                    }
-
-                    break;
-                }
+                list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence([5, 7, 5][$i], $morphemes, ${"keywords_{$i}"} ?? $keywords);
             } catch (\Exception $e) {
-                continue;
-            }
+                if ($i < 1) {
+                    throw $e;
+                }
 
-            break;
+                $i -= 2;
+                $j -= 2;
+            }
         }
 
         $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
@@ -105,6 +95,10 @@ class Senryu extends Model
 
             if (is_null($next)) {
                 throw new \Exception('Array of next morphemes is empty.');
+            }
+
+            if (!\Arr::has($morphemes, $next)) {
+                continue;
             }
 
             $morpheme = $morphemes[$next];
