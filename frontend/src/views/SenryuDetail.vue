@@ -156,6 +156,8 @@ export default {
                 );
 
                 this.senryu = data;
+
+                console.log(this.senryu.path);
             } catch (e) {
                 alert('川柳の取得に失敗しました。');
             } finally {

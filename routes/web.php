@@ -11,4 +11,6 @@
 |
 */
 
+Route::get('/senryus/{senryu}', 'SenryuController@card');
+
 Route::get('/{any}', 'SpaController')->where('any', '^(?!(api|storage)($|/)).*');

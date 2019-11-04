@@ -177,7 +177,6 @@ export default {
                         order: this.order,
                     },
                 });
-
                 this.length = data.last_page;
                 this.senryus = data.data;
             } catch (e) {
