@@ -1,73 +1,71 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="onSubmit">
-            <v-row>
-                <v-col cols="12" md="6" lg="4">
-                    <v-row
-                        class="mx-auto"
-                        no-gutters
-                        :style="{ width: '360px' }"
-                    >
-                        <v-col cols="6">
-                            <v-select
-                                class="mr-auto"
-                                hide-details
-                                :items="['今日', '今週', '今月', '全て']"
-                                label="日付"
-                                solo
-                                :style="{ width: '172px' }"
-                            />
-                        </v-col>
-                        <v-col cols="6">
-                            <v-select
-                                class="ml-auto"
-                                hide-details
-                                :items="['新着順', '人気順']"
-                                label="順序"
-                                solo
-                                :style="{ width: '172px' }"
-                            />
-                        </v-col>
-                    </v-row>
-                </v-col>
-                <v-col cols="12" md="6" offset-lg="4" lg="4">
-                    <v-text-field
-                        class="mx-auto"
-                        append-icon="fas fa-search"
-                        hide-details
-                        label="ワード検索"
-                        solo
-                        :style="{ width: '360px' }"
-                        @click:append="onSubmit"
-                    />
-                </v-col>
-            </v-row>
-        </v-form>
+        <v-row>
+            <v-col cols="12" lg="4" md="6">
+                <v-row class="mx-auto" no-gutters :style="{ width: '360px' }">
+                    <v-col cols="6">
+                        <v-select
+                            class="mr-auto"
+                            hide-details
+                            :items="['今日', '今週', '今月', '全て']"
+                            label="日付"
+                            solo
+                            :style="{ width: '172px' }"
+                        />
+                    </v-col>
+                    <v-col cols="6">
+                        <v-select
+                            class="ml-auto"
+                            hide-details
+                            :items="['新着順', '人気順']"
+                            label="順序"
+                            solo
+                            :style="{ width: '172px' }"
+                        />
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12" lg="4" md="6" offset-lg="4">
+                <v-text-field
+                    class="mx-auto"
+                    hide-details
+                    label="ワード検索"
+                    solo
+                    :style="{ width: '360px' }"
+                    @keyup.enter="onSubmit"
+                >
+                    <template #append>
+                        <v-icon tag="a" @click.stop="onSubmit" @mousedown.stop>
+                            fas fa-search
+                        </v-icon>
+                    </template>
+                </v-text-field>
+            </v-col>
+        </v-row>
         <v-row>
             <v-col
                 v-for="senryu in senryus"
                 :key="senryu.id"
                 cols="12"
-                md="6"
                 lg="4"
+                md="6"
             >
                 <v-skeleton-loader
                     v-if="isLoading"
                     class="mx-auto"
                     height="400"
                     tile
-                    type="image,image"
+                    type="image@2"
                     width="360"
                 />
                 <senryu-card v-else :senryu="senryu" />
             </v-col>
         </v-row>
         <v-pagination
-            v-model="page"
+            v-model="currentPage"
             class="my-3"
             :disabled="isLoading"
-            :length="lastPage"
-            @input="getSenryus"
+            :length="length"
         />
     </v-container>
 </template>
@@ -77,10 +75,12 @@ import SenryuCard from '@/components/SenryuCard';
 
 export default {
     components: { SenryuCard },
+    props: {
+        page: { type: Number },
+    },
     data: () => ({
-        isLoading: true,
-        lastPage: 1,
-        page: 1,
+        isLoading: false,
+        length: 1,
         senryus: [
             { id: -1 },
             { id: -2 },
@@ -90,6 +90,25 @@ export default {
             { id: -6 },
         ],
     }),
+    computed: {
+        currentPage: {
+            get() {
+                return this.page;
+            },
+            set(page) {
+                if (page == this.$route.query.page) {
+                    this.getSenryus();
+                } else {
+                    this.$router.push({ query: { page } });
+                }
+            },
+        },
+    },
+    watch: {
+        $route() {
+            this.getSenryus();
+        },
+    },
     created() {
         this.getSenryus();
     },
@@ -104,8 +123,7 @@ export default {
                     },
                 });
 
-                this.lastPage = data.last_page;
-                this.page = data.current_page;
+                this.length = data.last_page;
                 this.senryus = data.data;
             } catch (e) {
                 alert('川柳の取得に失敗しました。');
@@ -119,3 +137,13 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-skeleton-loader__bone:nth-child(1) {
+    border-radius: 16px 16px 0 0;
+}
+
+::v-deep .v-skeleton-loader__bone:nth-child(2) {
+    border-radius: 0 0 16px 16px;
+}
+</style>
