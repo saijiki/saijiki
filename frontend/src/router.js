@@ -22,9 +22,16 @@ export default new Router({
             path: '/senryus',
             name: 'Senryus',
             component: () => import('@/views/Senryus'),
-            props: ({ query: { page } }) => ({
+            props: ({ query: { page, word, period, order } }) => ({
                 page: page > 1 ? page | 0 : 1,
+                word,
+                period,
+                order,
             }),
+        },
+        {
+            path: '*',
+            component: () => import('@/views/NotFound'),
         },
     ],
 });

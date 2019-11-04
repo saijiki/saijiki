@@ -49,14 +49,14 @@
                     <v-btn
                         color="green darken-1"
                         text
-                        @click="isUploadDialogVisible = false"
+                        @click="onSubmitFile"
                     >
                         一句詠む
                     </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-overlay :value="isLoading">
+        <v-overlay :value="isLoading" z-index="203">
             <loading-progress
                 fill-duration="2"
                 hide-background
@@ -103,6 +103,7 @@ export default {
                 return;
             }
 
+            //ローディング画面
             this.isLoading = true;
 
             try {
@@ -122,6 +123,30 @@ export default {
                 this.isLoading = false;
             }
         },
+      async onSubmitFile(){
+        //ローディング画面
+        this.isLoading = true;
+
+        try {
+            var params = new FormData();
+            params.append('file', this.imageFileObj);
+
+            this.isUploadDialogVisible = false
+            const { data } = await this.$axios.post('/api/senryus',params);
+
+            this.$router.push({
+                name: 'SenryuDetail',
+                params: {
+                    id: data.id,
+                },
+            });
+        } catch (e) {
+            alert('川柳の作成に失敗しました。');
+        } finally {
+            this.isLoading = false;
+        }
+
+      },
     },
 };
 </script>
