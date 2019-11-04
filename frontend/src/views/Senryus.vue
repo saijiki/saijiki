@@ -2,36 +2,39 @@
     <v-container>
         <v-row>
             <v-col cols="12" lg="4" md="6">
-                <v-row class="mx-auto" no-gutters :style="{ width: '360px' }">
+                <v-row class="mx-auto" no-gutters :style="{ maxWidth: '360px' }">
                     <v-col cols="6">
                         <v-select
-                            class="mr-auto"
+                            v-model="currentPeriod"
+                            class="mr-2"
                             hide-details
                             :items="['今日', '今週', '今月', '全て']"
                             label="日付"
                             solo
-                            :style="{ width: '172px' }"
+                            :style="{ maxWidth: '172px' }"
                         />
                     </v-col>
                     <v-col cols="6">
                         <v-select
-                            class="ml-auto"
+                            v-model="currentOrder"
+                            class="ml-2"
                             hide-details
                             :items="['新着順', '人気順']"
                             label="順序"
                             solo
-                            :style="{ width: '172px' }"
+                            :style="{ maxWidth: '172px' }"
                         />
                     </v-col>
                 </v-row>
             </v-col>
             <v-col cols="12" lg="4" md="6" offset-lg="4">
                 <v-text-field
+                    v-model="filter"
                     class="mx-auto"
                     hide-details
                     label="ワード検索"
                     solo
-                    :style="{ width: '360px' }"
+                    :style="{ maxWidth: '360px' }"
                     @keyup.enter="onSubmit"
                 >
                     <template #append>
@@ -77,9 +80,13 @@ export default {
     components: { SenryuCard },
     props: {
         page: { type: Number },
+        word: { type: String },
+        period: { type: String },
+        order: { type: String },
     },
     data: () => ({
         isLoading: false,
+        filter: '',
         length: 1,
         senryus: [
             { id: -1 },
@@ -99,7 +106,52 @@ export default {
                 if (page == this.$route.query.page) {
                     this.getSenryus();
                 } else {
-                    this.$router.push({ query: { page } });
+                    this.$router.push({
+                      query: {
+                          page,
+                          word: this.word,
+                          period: this.period,
+                          order: this.order,
+                    }
+                  });
+                }
+            },
+        },
+        currentPeriod: {
+            get() {
+                return this.period;
+            },
+            set(period) {
+                if (period == this.$route.query.period) {
+                    this.getSenryus();
+                } else {
+                    this.$router.push({
+                      query: {
+                          page: this.page,
+                          word: this.word,
+                          period,
+                          order: this.order,
+                    }
+                  });
+                }
+            },
+        },
+        currentOrder: {
+            get() {
+                return this.order;
+            },
+            set(order) {
+                if (order == this.$route.query.order) {
+                    this.getSenryus();
+                } else {
+                    this.$router.push({
+                      query: {
+                          page: this.page,
+                          word: this.word,
+                          period: this.period,
+                          order,
+                    }
+                  });
                 }
             },
         },
@@ -120,6 +172,9 @@ export default {
                 const { data } = await this.$axios.get('/api/senryus', {
                     params: {
                         page: this.page,
+                        word: this.word,
+                        period: this.period,
+                        order: this.order,
                     },
                 });
 
@@ -132,7 +187,14 @@ export default {
             }
         },
         async onSubmit() {
-            //
+            this.$router.push({
+              query: {
+                  page: this.page,
+                  word: this.filter,
+                  period: this.period,
+                  order: this.order,
+            }
+          });
         },
     },
 };
