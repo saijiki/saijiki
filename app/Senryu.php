@@ -43,9 +43,28 @@ class Senryu extends Model
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
-        list('body' => $sentence_1, 'keywords' => $keywords) = self::generateSentence(5, $morphemes, $keywords);
-        list('body' => $sentence_2, 'keywords' => $keywords) = self::generateSentence(7, $morphemes, $keywords);
-        list('body' => $sentence_3, 'keywords' => $keywords) = self::generateSentence(5, $morphemes, $keywords);
+        // TODO: 整形する
+        while (true) {
+            list('keywords' => $keywords, 'surface' => $sentence_1) = self::generateSentence(5, $morphemes, $keywords);
+
+            try {
+                while (true) {
+                    list('keywords' => $keywords, 'surface' => $sentence_2) = self::generateSentence(7, $morphemes, $keywords);
+
+                    try {
+                        list('keywords' => $keywords, 'surface' => $sentence_3) = self::generateSentence(5, $morphemes, $keywords);
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+
+                    break;
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+
+            break;
+        }
 
         $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
 
@@ -57,12 +76,14 @@ class Senryu extends Model
     /**
      * 指定された文字数の句を生成する。
      *
-     * @param  int    $chars
-     * @param  array  $morphemes
-     * @param  array  $keywords
+     * @param  int     $chars
+     * @param  array   $morphemes
+     * @param  array   $keywords
+     * @param  string  $surface
+     * @param  string  $reading
      * @return array
      */
-    private static function generateSentence(int $chars, array $morphemes, array $keywords)
+    private static function generateSentence(int $chars, array $morphemes, array $keywords, string $surface = '', string $reading = '')
     {
         if (!\Arr::has($keywords, 'prev') || !\Arr::has($keywords, 'next')) {
             $keywords = [
@@ -71,14 +92,29 @@ class Senryu extends Model
             ];
         }
 
-        $surface = '';
-        $reading = '';
+        if (self::calcMora($reading) === $chars) {
+            return compact('keywords', 'surface');
+        }
+
+        shuffle($keywords['prev']);
+        shuffle($keywords['next']);
 
         while (true) {
-            if (isset($morpheme)) {
-                $morpheme = $morphemes[\Arr::random($morpheme['next'])];
-            } else {
-                $morpheme = $morphemes[\Arr::random($keywords['next'])];
+            $prev = array_shift($keywords['prev']);
+            $next = array_shift($keywords['next']);
+
+            if (is_null($next)) {
+                throw new \Exception('Array of next morphemes is empty.');
+            }
+
+            $morpheme = $morphemes[$next];
+
+            if (self::calcMora($reading) === 0 && $morpheme['part_of_speech'] === '助詞') {
+                continue;
+            }
+
+            if (self::calcMora($reading) === 0 && $morpheme['part_of_speech'] === '形容詞') {
+                continue;
             }
 
             if (self::calcMora($reading) + self::calcMora($morpheme['reading']) > $chars) {
@@ -88,12 +124,12 @@ class Senryu extends Model
             $surface .= $morpheme['surface'];
             $reading .= $morpheme['reading'];
 
-            if (self::calcMora($reading) === $chars) {
-                break;
+            try {
+                return self::generateSentence($chars, $morphemes, $morpheme, $surface, $reading);
+            } catch (\Exception $e) {
+                //
             }
         }
-
-        return ['body' => $surface, 'keywords' => \Arr::only($morpheme, ['prev', 'next'])];
     }
 
     /**
@@ -121,6 +157,11 @@ class Senryu extends Model
      */
     private static function calcMora(string $sentence)
     {
+        $sentence = str_replace('ァ', '', $sentence);
+        $sentence = str_replace('ィ', '', $sentence);
+        $sentence = str_replace('ゥ', '', $sentence);
+        $sentence = str_replace('ェ', '', $sentence);
+        $sentence = str_replace('ォ', '', $sentence);
         $sentence = str_replace('ャ', '', $sentence);
         $sentence = str_replace('ュ', '', $sentence);
         $sentence = str_replace('ョ', '', $sentence);
