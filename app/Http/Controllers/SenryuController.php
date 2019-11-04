@@ -14,7 +14,11 @@ class SenryuController extends Controller
      */
     public function index()
     {
-        return response()->json(Senryu::paginate(6));
+        $senryus = Senryu::select('id', 'path')
+            ->orderByDesc('created_at')
+            ->paginate(6);
+
+        return response()->json($senryus);
     }
 
     /**

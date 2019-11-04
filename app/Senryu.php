@@ -50,7 +50,7 @@ class Senryu extends Model
         $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
 
         return self::create([
-            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}")
+            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}"),
         ]);
     }
 
@@ -121,15 +121,9 @@ class Senryu extends Model
      */
     private static function calcMora(string $sentence)
     {
-        $sentence = str_replace('ァ', '', $sentence);
-        $sentence = str_replace('ィ', '', $sentence);
-        $sentence = str_replace('ゥ', '', $sentence);
-        $sentence = str_replace('ェ', '', $sentence);
-        $sentence = str_replace('ォ', '', $sentence);
         $sentence = str_replace('ャ', '', $sentence);
         $sentence = str_replace('ュ', '', $sentence);
         $sentence = str_replace('ョ', '', $sentence);
-        $sentence = str_replace('ヮ', '', $sentence);
 
         return mb_strlen($sentence);
     }
