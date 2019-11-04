@@ -27,7 +27,7 @@ class SenryuController extends Controller
      */
     public function card(Request $request, Senryu $senryu)
     {
-      if ($request->header('User-Agent') === 'Twitterbot') {
+      if ($request->header('User-Agent') === 'Twitterbot/1.0') {
         return view('twitter', compact('senryu'));
       }else{
         return view('welcome');
