@@ -164,6 +164,7 @@ export default {
                 this.isLoading = false;
             }
         },
+//TODO urlを取得して新しいウィンドウでツイートさせる
         async copyUrl() {
             const url = `${location.origin}${location.pathname}`;
 
