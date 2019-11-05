@@ -94,7 +94,7 @@
                             </v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title>
+                            <v-list-item-title @click="openTweetWindow">
                                 Twitterでシェアする
                             </v-list-item-title>
                         </v-list-item-content>
@@ -164,7 +164,10 @@ export default {
                 this.isLoading = false;
             }
         },
-//TODO urlを取得して新しいウィンドウでツイートさせる
+        async openTweetWindow(){
+          let tweet = 'https://twitter.com/intent/tweet?text=Saijikiが川柳を読んだよ%0a'+`${location.origin}${location.pathname}`+'&hashtags=Saijiki';
+          let win = window.open(tweet,'newwindow','width=480,height=360');
+        },
         async copyUrl() {
             const url = `${location.origin}${location.pathname}`;
 
