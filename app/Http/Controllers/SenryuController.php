@@ -29,6 +29,8 @@ class SenryuController extends Controller
     {
       if (\Str::startsWith($request->header('User-Agent') , 'Twitterbot/')) {
         return view('twitter', compact('senryu'));
+      }else if(\Str::startsWith($request->header('User-Agent') , 'line/')){
+        return view('line',compact('senryu'));
       }else{
         return view('welcome');
       }

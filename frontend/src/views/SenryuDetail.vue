@@ -78,12 +78,12 @@
                     <v-list-item @click="() => {}">
                         <v-list-item-icon>
                             <v-icon>
-                                fab fa-facebook-square
+                                fab fa-line
                             </v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title>
-                                Facebookでシェアする
+                            <v-list-item-title @click='openLineWindow'>
+                                Lineでシェアする
                             </v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
@@ -94,7 +94,7 @@
                             </v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title @click="openTweetWindow">
+                            <v-list-item-title @click='openTweetWindow'>
                                 Twitterでシェアする
                             </v-list-item-title>
                         </v-list-item-content>
@@ -164,8 +164,12 @@ export default {
                 this.isLoading = false;
             }
         },
+        async openLineWindow(){
+          const postLine = 'https://social-plugins.line.me/lineit/share?url='+`${location.origin}${location.pathname}`;
+          let win = window.open(postLine,'newwindow','width=500,height=560');
+        },
         async openTweetWindow(){
-          let tweet = 'https://twitter.com/intent/tweet?text=Saijikiが川柳を読んだよ%0a'+`${location.origin}${location.pathname}`+'&hashtags=Saijiki';
+          const tweet = 'https://twitter.com/intent/tweet?text=Saijikiが川柳を読んだよ%0a'+`${location.origin}${location.pathname}`+'&hashtags=Saijiki';
           let win = window.open(tweet,'newwindow','width=480,height=360');
         },
         async copyUrl() {
