@@ -35,7 +35,7 @@ class SenryuController extends Controller
         if($request->has('period')) {
 
             if ($param['period'] == '今日') {
-                $dt = \Date::now();
+                $dt = \Date::today();
                 $senryus = $builder->where('created_at', '>=', $dt);
             }
             else if ($param['period'] == '今週') {
