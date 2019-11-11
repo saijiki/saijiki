@@ -19,13 +19,18 @@
 
                     <v-card
                         color="white"
-                        height="600"
+                        height="0"
                         :img="senryu.path"
                         raised
+                        :style="{ paddingTop: '111.111111111%' }"
                         tag="a"
                         width="540"
                     >
-                    <v-layout column fill-height>
+                    <v-layout
+                        column
+                        fill-height
+                        :style="{ position: 'absolute', 'top': 0, 'right': 0, 'bottom': 0, 'left': 0 }"
+                    >
                       <div>
                         <v-layout class="ml-3 mt-2" align-center>
                           <v-icon class="mr-1" color="grey darken-1" size="20">

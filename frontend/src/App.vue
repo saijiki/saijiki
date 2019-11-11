@@ -25,7 +25,6 @@
                     fas fa-list-ul
                 </v-icon>
             </v-btn>
-            <v-spacer />
             <v-dialog v-model="isHelpDialogVisible" width="768">
                 <template #activator="{ on }">
                     <v-btn
@@ -93,6 +92,22 @@
                     </v-card-actions>
                 </v-card>
             </v-dialog>
+            <v-spacer />
+            <v-btn
+                class="ma-2 blue"
+                icon
+                large
+                :ripple="false"
+                v-on="on"
+            >
+                <v-icon>
+                    fas fa-sign-in-alt
+                </v-icon>
+            </v-btn>
+
+
+
+
         </v-app-bar>
         <v-content>
             <transition mode="out-in" name="fade-transition">
