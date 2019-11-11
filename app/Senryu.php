@@ -34,6 +34,54 @@ class Senryu extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'created_at_history',
+        'updated_at_history',
+    ];
+
+    /**
+     * @return string
+     */
+    public function getCreatedAtHistoryAttribute()
+    {
+        $methods = [
+            '日前' => 'diffInDays',
+            '時間前' => 'diffInHours',
+            '分前' => 'diffInMinutes',
+            '秒前' => 'diffInSeconds',
+        ];
+
+        foreach ($methods as $key => $method) {
+            if ($history = \Date::now()->$method($this->created_at)) {
+                return "{$history}{$key}";
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedAtHistoryAttribute()
+    {
+        $methods = [
+            '日前' => 'diffInDays',
+            '時間前' => 'diffInHours',
+            '分前' => 'diffInMinutes',
+            '秒前' => 'diffInSeconds',
+        ];
+
+        foreach ($methods as $key => $method) {
+            if ($history = \Date::now()->$method($this->updated_at)) {
+                return "{$history}{$key}";
+            }
+        }
+    }
+
+    /**
      * 川柳を生成する。
      *
      * @param  array  $keywords
