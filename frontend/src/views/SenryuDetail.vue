@@ -16,6 +16,7 @@
                 @click="isFlipped = !isFlipped"
             >
                 <template #front>
+
                     <v-card
                         color="white"
                         height="600"
@@ -24,37 +25,50 @@
                         tag="a"
                         width="540"
                     >
-                        <v-layout align-end fill-height justify-end>
-                            <v-btn
-                                class="mr-4 mb-1"
-                                color="deep-orange"
-                                icon
-                                large
-                                :ripple="false"
-                                @click.stop="senryu.good++"
-                            >
-                                <v-badge color="deep-orange">
-                                    <template #badge>
-                                        {{ senryu.good }}
-                                    </template>
-                                    <v-icon>
-                                        far fa-thumbs-up
-                                    </v-icon>
-                                </v-badge>
-                            </v-btn>
-                            <v-btn
-                                class="mr-2 mb-1"
-                                color="grey darken-3"
-                                icon
-                                large
-                                :ripple="false"
-                                @click.stop="isShareDialogVisible = true"
-                            >
-                                <v-icon>
-                                    fas fa-share
-                                </v-icon>
-                            </v-btn>
+                    <v-layout column fill-height>
+                      <div>
+                        <v-layout class="ml-3 mt-2" align-center>
+                          <v-icon class="mr-1" color="grey darken-1" size="20">
+                            fas fa-history
+                          </v-icon>
+
+                          {{ senryu.created_at_history }}
+
                         </v-layout>
+                      </div>
+
+                      <v-layout align-end justify-end>
+                        <v-btn
+                        class="mr-4 mb-1"
+                        color="deep-orange"
+                        icon
+                        large
+                        :ripple="false"
+                        @click.stop="senryu.good++"
+                        >
+                        <v-badge color="deep-orange">
+                          <template #badge>
+                            {{ senryu.good }}
+                          </template>
+                          <v-icon>
+                            far fa-thumbs-up
+                          </v-icon>
+                        </v-badge>
+                      </v-btn>
+                      <v-btn
+                      class="mr-2 mb-1"
+                      color="grey darken-3"
+                      icon
+                      large
+                      :ripple="false"
+                      @click.stop="isShareDialogVisible = true"
+                      >
+                      <v-icon>
+                        fas fa-share
+                      </v-icon>
+                    </v-btn>
+                  </v-layout>
+                    </v-layout>
                     </v-card>
                 </template>
                 <template #back>
