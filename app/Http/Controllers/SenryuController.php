@@ -17,7 +17,12 @@ class SenryuController extends Controller
     {
         $param = $request->all();
 
-        $builder = Senryu::select('id', 'path');
+        $builder = Senryu::select([
+            'id',
+            'path',
+            'created_at',
+            'updated_at',
+        ]);
 
         // 順序
         if($request->has('order')) {
@@ -32,7 +37,7 @@ class SenryuController extends Controller
             if ($param['period'] == '今日') {
                 $dt = \Date::now();
                 $senryus = $builder->where('created_at', '>=', $dt);
-            } 
+            }
             else if ($param['period'] == '今週') {
                 $dt = \Date::today()->subWeek();
                 $senryus = $builder->where('created_at', '>=', $dt);
