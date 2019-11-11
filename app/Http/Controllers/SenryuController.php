@@ -38,7 +38,7 @@ class SenryuController extends Controller
                 $senryus = $builder->where('created_at', '>=', $dt);
             }
             else if ($param['period'] == '今月') {
-                $dt = \Date::today()->subMonday();
+                $dt = \Date::today()->subMonth();
                 $senryus = $builder->where('created_at', '>=', $dt);
             }
         }
