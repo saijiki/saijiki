@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Senryu;
-use Carbon\Carbon;
 
 class SenryuController extends Controller
 {
@@ -31,15 +30,15 @@ class SenryuController extends Controller
         if($request->has('period')) {
 
             if ($param['period'] == '今日') {
-                $dt = Carbon::today();
+                $dt = \Date::now();
                 $senryus = $builder->where('created_at', '>=', $dt);
             } 
             else if ($param['period'] == '今週') {
-                $dt = Carbon::now()->subDay(7);
+                $dt = \Date::today()->subWeek();
                 $senryus = $builder->where('created_at', '>=', $dt);
             }
             else if ($param['period'] == '今月') {
-                $dt = Carbon::now()->subMonday(1);
+                $dt = \Date::today()->subMonday();
                 $senryus = $builder->where('created_at', '>=', $dt);
             }
         }
