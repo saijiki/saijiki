@@ -95,7 +95,13 @@
                 </v-card>
             </v-dialog>
             <v-spacer />
-            <v-btn class="ma-2 blue" icon large :ripple="false">
+            <v-btn
+                class="ma-2 blue"
+                icon
+                large
+                :ripple="false"
+                :to="{ name: 'Login' }"
+            >
                 <v-icon>
                     fas fa-sign-in-alt
                 </v-icon>
