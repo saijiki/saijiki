@@ -25,7 +25,6 @@
                     fas fa-list-ul
                 </v-icon>
             </v-btn>
-            <v-spacer />
             <v-dialog v-model="isHelpDialogVisible" width="768">
                 <template #activator="{ on }">
                     <v-btn
@@ -42,41 +41,43 @@
                 </template>
                 <v-card>
                     <v-card-title class="headline">
-                        サイトについて
+                        このサイトについて
                     </v-card-title>
                     <v-card-text class="pb-0">
                         <v-stepper class="pb-0 elevation-0" non-linear vertical>
                             <v-stepper-step editable step="1">
-                              Saijikiとは
+                                Saijikiとは？
                             </v-stepper-step>
                             <v-stepper-content step="1">
                                 <p>
-                                    キーワードや写真から川柳を生成します
+                                    キーワードや写真からオリジナルの川柳を生成できるサービスです。
                                 </p>
                             </v-stepper-content>
                             <v-stepper-step editable step="2">
-                              川柳を作る
+                                川柳を生成するには？
                             </v-stepper-step>
                             <v-stepper-content step="2">
-                                <p>
-                                    ・キーワード欄に単語を入れて生成します<br>
-                                    ・
-                                    <v-icon>
-                                        fas fa-camera
-                                    </v-icon>
-                                    から写真をアップロードします
-                                </p>
+                                <ul>
+                                    <li>
+                                        キーワード欄に単語を入力してエンターキーを押下します。
+                                    </li>
+                                    <li>
+                                        <v-icon size="18">
+                                            fas fa-camera
+                                        </v-icon>
+                                        ボタンから写真をアップロードします。
+                                    </li>
+                                </ul>
                             </v-stepper-content>
                             <v-stepper-step editable step="3">
-                                川柳を評価する
+                                お気に入りの川柳が生成できたら？
                             </v-stepper-step>
                             <v-stepper-content step="3">
                                 <p>
-                                  良い句には
-                                  <v-icon>
-                                      far fa-thumbs-up
-                                  </v-icon>
-                                  を押す
+                                    <v-icon size="18">
+                                        far fa-thumbs-up
+                                    </v-icon>
+                                    ボタンから評価ができます。
                                 </p>
                             </v-stepper-content>
                         </v-stepper>
@@ -93,6 +94,12 @@
                     </v-card-actions>
                 </v-card>
             </v-dialog>
+            <v-spacer />
+            <v-btn class="ma-2 blue" icon large :ripple="false">
+                <v-icon>
+                    fas fa-sign-in-alt
+                </v-icon>
+            </v-btn>
         </v-app-bar>
         <v-content>
             <transition mode="out-in" name="fade-transition">

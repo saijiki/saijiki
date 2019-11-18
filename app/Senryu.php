@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Arr;
 use Symfony\Component\Process\Process;
 
 class Senryu extends Model
@@ -35,6 +34,54 @@ class Senryu extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'created_at_history',
+        'updated_at_history',
+    ];
+
+    /**
+     * @return string
+     */
+    public function getCreatedAtHistoryAttribute()
+    {
+        $methods = [
+            '日前' => 'diffInDays',
+            '時間前' => 'diffInHours',
+            '分前' => 'diffInMinutes',
+            '秒前' => 'diffInSeconds',
+        ];
+
+        foreach ($methods as $key => $method) {
+            if ($history = \Date::now()->$method($this->created_at)) {
+                return "{$history}{$key}";
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedAtHistoryAttribute()
+    {
+        $methods = [
+            '日前' => 'diffInDays',
+            '時間前' => 'diffInHours',
+            '分前' => 'diffInMinutes',
+            '秒前' => 'diffInSeconds',
+        ];
+
+        foreach ($methods as $key => $method) {
+            if ($history = \Date::now()->$method($this->updated_at)) {
+                return "{$history}{$key}";
+            }
+        }
+    }
+
+    /**
      * 川柳を生成する。
      *
      * @param  array  $keywords
@@ -44,42 +91,72 @@ class Senryu extends Model
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
-        list('body' => $sentence_1, 'keywords' => $keywords) = self::generateSentence(5, $morphemes, $keywords);
-        list('body' => $sentence_2, 'keywords' => $keywords) = self::generateSentence(7, $morphemes, $keywords);
-        list('body' => $sentence_3, 'keywords' => $keywords) = self::generateSentence(5, $morphemes, $keywords);
+        for ($i = 0, $j = 1; $i < 3; $i++, $j++) {
+            try {
+                list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence([5, 7, 5][$i], $morphemes, ${"keywords_{$i}"} ?? $keywords);
+            } catch (\Exception $e) {
+                if ($i < 1) {
+                    throw $e;
+                }
+
+                $i -= 2;
+                $j -= 2;
+            }
+        }
 
         $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
 
         return self::create([
-            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}")
+            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}"),
         ]);
     }
 
     /**
      * 指定された文字数の句を生成する。
      *
-     * @param  int    $chars
-     * @param  array  $morphemes
-     * @param  array  $keywords
+     * @param  int     $chars
+     * @param  array   $morphemes
+     * @param  array   $keywords
+     * @param  string  $surface
+     * @param  string  $reading
      * @return array
      */
-    private static function generateSentence(int $chars, array $morphemes, array $keywords)
+    private static function generateSentence(int $chars, array $morphemes, array $keywords, string $surface = '', string $reading = '')
     {
-        if (!Arr::has($keywords, 'prev') || !Arr::has($keywords, 'next')) {
+        if (!\Arr::has($keywords, 'prev') || !\Arr::has($keywords, 'next')) {
             $keywords = [
                 'prev' => $keywords,
                 'next' => $keywords,
             ];
         }
 
-        $surface = '';
-        $reading = '';
+        if (self::calcMora($reading) === $chars) {
+            return compact('keywords', 'surface');
+        }
+
+        shuffle($keywords['prev']);
+        shuffle($keywords['next']);
 
         while (true) {
-            if (isset($morpheme)) {
-                $morpheme = $morphemes[Arr::random($morpheme['next'])];
-            } else {
-                $morpheme = $morphemes[Arr::random($keywords['next'])];
+            $prev = array_shift($keywords['prev']);
+            $next = array_shift($keywords['next']);
+
+            if (is_null($next)) {
+                throw new \Exception('Array of next morphemes is empty.');
+            }
+
+            if (!\Arr::has($morphemes, $next)) {
+                continue;
+            }
+
+            $morpheme = $morphemes[$next];
+
+            if (self::calcMora($reading) === 0 && $morpheme['part_of_speech'] === '助詞') {
+                continue;
+            }
+
+            if (self::calcMora($reading) === 0 && $morpheme['part_of_speech'] === '形容詞') {
+                continue;
             }
 
             if (self::calcMora($reading) + self::calcMora($morpheme['reading']) > $chars) {
@@ -89,12 +166,12 @@ class Senryu extends Model
             $surface .= $morpheme['surface'];
             $reading .= $morpheme['reading'];
 
-            if (self::calcMora($reading) === $chars) {
-                break;
+            try {
+                return self::generateSentence($chars, $morphemes, $morpheme, $surface, $reading);
+            } catch (\Exception $e) {
+                //
             }
         }
-
-        return ['body' => $surface, 'keywords' => Arr::only($morpheme, ['prev', 'next'])];
     }
 
     /**
@@ -130,7 +207,6 @@ class Senryu extends Model
         $sentence = str_replace('ャ', '', $sentence);
         $sentence = str_replace('ュ', '', $sentence);
         $sentence = str_replace('ョ', '', $sentence);
-        $sentence = str_replace('ヮ', '', $sentence);
 
         return mb_strlen($sentence);
     }

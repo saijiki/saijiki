@@ -21,8 +21,8 @@
                 </v-text-field>
                 <input
                     class="d-none"
-                    type="file"
                     accept=".jpg,.jpeg,.png"
+                    type="file"
                     @change="onPickFile"
                 />
             </v-form>
@@ -46,11 +46,7 @@
                     >
                         キャンセル
                     </v-btn>
-                    <v-btn
-                        color="green darken-1"
-                        text
-                        @click="onSubmitFile"
-                    >
+                    <v-btn color="green darken-1" text @click="onSubmitFile">
                         一句詠む
                     </v-btn>
                 </v-card-actions>
@@ -103,7 +99,6 @@ export default {
                 return;
             }
 
-            //ローディング画面
             this.isLoading = true;
 
             try {
@@ -123,30 +118,30 @@ export default {
                 this.isLoading = false;
             }
         },
-      async onSubmitFile(){
-        //ローディング画面
-        this.isLoading = true;
+        async onSubmitFile() {
+            if (this.isLoading || this.imageFileUrl === null) {
+                return;
+            }
 
-        try {
-            var params = new FormData();
-            params.append('file', this.imageFileObj);
+            this.isLoading = true;
 
-            this.isUploadDialogVisible = false
-            const { data } = await this.$axios.post('/api/senryus',params);
+            try {
+                const { data } = await this.$axios.post('/api/senryus', {
+                    image_file_url: this.imageFileUrl,
+                });
 
-            this.$router.push({
-                name: 'SenryuDetail',
-                params: {
-                    id: data.id,
-                },
-            });
-        } catch (e) {
-            alert('川柳の作成に失敗しました。');
-        } finally {
-            this.isLoading = false;
-        }
-
-      },
+                this.$router.push({
+                    name: 'SenryuDetail',
+                    params: {
+                        id: data.id,
+                    },
+                });
+            } catch (e) {
+                alert('川柳の作成に失敗しました。');
+            } finally {
+                this.isLoading = false;
+            }
+        },
     },
 };
 </script>

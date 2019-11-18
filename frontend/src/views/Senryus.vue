@@ -119,7 +119,7 @@ export default {
         },
         currentPeriod: {
             get() {
-                return this.period;
+                return this.period || '全て';
             },
             set(period) {
                 if (period == this.$route.query.period) {
@@ -138,7 +138,7 @@ export default {
         },
         currentOrder: {
             get() {
-                return this.order;
+                return this.order || '新着順';
             },
             set(order) {
                 if (order == this.$route.query.order) {

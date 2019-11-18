@@ -43,22 +43,22 @@ image.putalpha(0)
 # フォントデータを取得
 font = ImageFont.truetype(font=FONT_FILE_PATH, size=FONT_SIZE)
 
-# 各句の横幅と縦幅を計算
+# 各文字の横幅と縦幅を計算
 sentence_1_sizes = [font.getsize(char) for char in TARGET_SENTENCE_1]
 sentence_2_sizes = [font.getsize(char) for char in TARGET_SENTENCE_2]
 sentence_3_sizes = [font.getsize(char) for char in TARGET_SENTENCE_3]
 
-# 各句の横幅を取得
+# 各文字の横幅を取得
 sentence_1_widths = [size[0] for size in sentence_1_sizes]
 sentence_2_widths = [size[0] for size in sentence_2_sizes]
 sentence_3_widths = [size[0] for size in sentence_3_sizes]
 
-# 各句の縦幅を取得
+# 各文字の縦幅を取得
 sentence_1_heights = [size[1] for size in sentence_1_sizes]
 sentence_2_heights = [size[1] for size in sentence_2_sizes]
 sentence_3_heights = [size[1] for size in sentence_3_sizes]
 
-# 各句のＸ軸を計算
+# 各句のＸ軸を計算 (句の開始位置)
 sentence_1_x = ((IMAGE_WIDTH - FONT_SIZE * 3) / 4) * 3 + FONT_SIZE * 2 # 初句 (行間 * 3 + フォントサイズ * 2)
 sentence_2_x = ((IMAGE_WIDTH - FONT_SIZE * 3) / 4) * 2 + FONT_SIZE * 1 # 二句 (行間 * 2 + フォントサイズ * 1)
 sentence_3_x = ((IMAGE_WIDTH - FONT_SIZE * 3) / 4) * 1 + FONT_SIZE * 0 # 結句 (行間 * 1 + フォントサイズ * 0)
