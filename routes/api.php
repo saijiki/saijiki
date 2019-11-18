@@ -12,7 +12,7 @@
 */
 
 Route::middleware('api')->namespace('Auth')->prefix('auth')->name('auth.')->group(function () {
-    Route::post('login', 'LoginController');
+    Route::post('login', 'LoginController')->name('login');
 });
 
 Route::apiResource('senryus', 'SenryuController')->parameters([
