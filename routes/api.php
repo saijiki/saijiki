@@ -18,3 +18,5 @@
 Route::apiResource('senryus', 'SenryuController')->parameters([
   'senryus' => 'senryu',
 ]);
+Route::get('sns/login', 'SnsBaseController@getAuth');
+Route::get('sns/callback', 'SnsBaseController@authCallback');

@@ -99,6 +99,7 @@
                 large
                 :ripple="false"
                 v-on="on"
+                @click="signInTwitter"
             >
                 <v-icon>
                     fas fa-sign-in-alt
@@ -120,7 +121,30 @@
 <script>
 export default {
     data: () => ({ isHelpDialogVisible: false }),
-};
+
+    methods:{
+      //twitterログイン処理,返ってきた後urlのトークンをバックに渡す
+      async signInTwitter(){
+        try {
+          const { data } = await this.$axios.get('/api/sns/login');
+          location.href = data;
+        } catch (e) {
+          console.log(e);
+        }
+        //コールバックしてから
+        try {
+          if(Object.keys(this.$route.query).length){
+            const { data } = await this.$axios.post('/api/senryus', {
+                token: this.$route.query.oauth_token,
+                verifier:this.$route.query.oauth_verifier
+            });
+          }
+        } catch (e) {}
+      },
+    },
+  };
+
+
 </script>
 
 <style lang="scss" scoped>
