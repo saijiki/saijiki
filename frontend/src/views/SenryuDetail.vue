@@ -175,21 +175,21 @@ export default {
                 );
 
                 this.senryu = data;
-
-                console.log(this.senryu.path);
             } catch (e) {
                 alert('川柳の取得に失敗しました。');
             } finally {
                 this.isLoading = false;
             }
         },
-        async openLineWindow(){
-          const postLine = 'https://social-plugins.line.me/lineit/share?url='+`${location.origin}${location.pathname}`;
-          let win = window.open(postLine,'newwindow','width=500,height=560');
+        async openLineWindow() {
+            const url = `https://social-plugins.line.me/lineit/share?url=${location.origin}${location.pathname}`;
+
+            window.open(url, null, 'width=500,height=560');
         },
-        async openTweetWindow(){
-          const tweet = 'https://twitter.com/intent/tweet?text=Saijikiが川柳を読んだよ%0a'+`${location.origin}${location.pathname}`+'&hashtags=Saijiki';
-          let win = window.open(tweet,'newwindow','width=480,height=360');
+        async openTweetWindow() {
+            const url = `https://twitter.com/intent/tweet?text=Saijikiが川柳を読んだよ%0a${location.origin}${location.pathname}`;
+
+            window.open(url, null, 'width=480,height=360');
         },
         async copyUrl() {
             const url = `${location.origin}${location.pathname}`;

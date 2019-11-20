@@ -60,24 +60,6 @@ class SenryuController extends Controller
     }
 
     /**
-     * 川柳一覧を取得する。
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Senryu  $senryu
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function card(Request $request, Senryu $senryu)
-    {
-      if (\Str::startsWith($request->header('User-Agent') , 'Twitterbot/')) {
-        return view('twitter', compact('senryu'));
-      }else if(\Str::startsWith($request->header('User-Agent') , 'line/')){
-        return view('line',compact('senryu'));
-      }else{
-        return view('welcome');
-      }
-    }
-
-    /**
      * 川柳を新規登録する。
      *
      * @param  \Illuminate\Http\Request  $request

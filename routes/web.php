@@ -11,6 +11,8 @@
 |
 */
 
-Route::get('/senryus/{senryu}', 'SenryuController@card');
+Route::get('senryus/{senryu}', 'OgpController')->middleware([
+    App\Http\Middleware\RedirectIfNotCrawler::class,
+]);
 
-Route::get('/{any}', 'SpaController')->where('any', '^(?!(api|storage)($|/)).*');
+Route::get('{any}', 'SpaController')->where('any', '^(?!(api|storage)($|/)).*');
