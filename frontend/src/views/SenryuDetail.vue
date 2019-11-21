@@ -94,19 +94,19 @@
                     <v-subheader>
                         シェアする
                     </v-subheader>
-                    <v-list-item @click="() => {}">
+                    <v-list-item @click="shareOnLine">
                         <v-list-item-icon>
                             <v-icon>
-                                fab fa-facebook-square
+                                fab fa-line
                             </v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
                             <v-list-item-title>
-                                Facebookでシェアする
+                                LINEでシェアする
                             </v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="() => {}">
+                    <v-list-item @click="shareOnTwitter">
                         <v-list-item-icon>
                             <v-icon>
                                 fab fa-twitter-square
@@ -181,10 +181,30 @@ export default {
                 this.isLoading = false;
             }
         },
+        shareOnLine() {
+            const url = new URL('https://social-plugins.line.me/lineit/share');
+
+            url.searchParams.set(
+                'url',
+                `${location.origin}${location.pathname}`
+            );
+
+            window.open(url.toString(), '_blank', 'width=500,height=560');
+        },
+        shareOnTwitter() {
+            const url = new URL('https://twitter.com/intent/tweet');
+
+            url.searchParams.set(
+                'text',
+                `Saijikiが川柳を詠んだよ。\n${location.origin}${location.pathname}`
+            );
+
+            window.open(url.toString(), '_blank', 'width=480,height=360');
+        },
         async copyUrl() {
             const url = `${location.origin}${location.pathname}`;
 
-            (() => {
+            await (async () => {
                 // IE
                 if (window.clipboardData) {
                     window.clipboardData.setData('Text', url);
@@ -193,7 +213,7 @@ export default {
 
                 // Chrome, Firefox & Opera
                 if (navigator.clipboard) {
-                    navigator.clipboard.writeText(url);
+                    await navigator.clipboard.writeText(url);
                     return;
                 }
 
