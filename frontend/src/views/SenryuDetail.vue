@@ -94,26 +94,26 @@
                     <v-subheader>
                         シェアする
                     </v-subheader>
-                    <v-list-item @click="() => {}">
+                    <v-list-item @click="shareOnLine">
                         <v-list-item-icon>
                             <v-icon>
                                 fab fa-line
                             </v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title @click='openLineWindow'>
-                                Lineでシェアする
+                            <v-list-item-title>
+                                LINEでシェアする
                             </v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="() => {}">
+                    <v-list-item @click="shareOnTwitter">
                         <v-list-item-icon>
                             <v-icon>
                                 fab fa-twitter-square
                             </v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title @click='openTweetWindow'>
+                            <v-list-item-title>
                                 Twitterでシェアする
                             </v-list-item-title>
                         </v-list-item-content>
@@ -181,20 +181,30 @@ export default {
                 this.isLoading = false;
             }
         },
-        async openLineWindow() {
-            const url = `https://social-plugins.line.me/lineit/share?url=${location.origin}${location.pathname}`;
+        shareOnLine() {
+            const url = new URL('https://social-plugins.line.me/lineit/share');
 
-            window.open(url, null, 'width=500,height=560');
+            url.searchParams.set(
+                'url',
+                `${location.origin}${location.pathname}`
+            );
+
+            window.open(url.toString(), '_blank', 'width=500,height=560');
         },
-        async openTweetWindow() {
-            const url = `https://twitter.com/intent/tweet?text=Saijikiが川柳を読んだよ%0a${location.origin}${location.pathname}`;
+        shareOnTwitter() {
+            const url = new URL('https://twitter.com/intent/tweet');
 
-            window.open(url, null, 'width=480,height=360');
+            url.searchParams.set(
+                'text',
+                `Saijikiが川柳を詠んだよ。\n${location.origin}${location.pathname}`
+            );
+
+            window.open(url.toString(), '_blank', 'width=480,height=360');
         },
         async copyUrl() {
             const url = `${location.origin}${location.pathname}`;
 
-            (() => {
+            await (async () => {
                 // IE
                 if (window.clipboardData) {
                     window.clipboardData.setData('Text', url);
@@ -203,7 +213,7 @@ export default {
 
                 // Chrome, Firefox & Opera
                 if (navigator.clipboard) {
-                    navigator.clipboard.writeText(url);
+                    await navigator.clipboard.writeText(url);
                     return;
                 }
 
