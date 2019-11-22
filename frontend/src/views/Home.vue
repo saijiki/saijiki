@@ -74,19 +74,6 @@ export default {
         isUploadDialogVisible: false,
         keyword: '',
     }),
-    // TODO: ログインのテスト。
-    // async created() {
-    //     try {
-    //         const { data } = await this.$axios.post('/api/auth/login', {
-    //             email: 'delia.weimann@example.com',
-    //             password: 'password',
-    //         });
-    //
-    //         console.log(data);
-    //     } catch (e) {
-    //         alert('ログインに失敗しました。');
-    //     }
-    // },
     methods: {
         pickFile() {
             document.querySelector('[type="file"]').click();
