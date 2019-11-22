@@ -12,7 +12,7 @@
 */
 
 Route::get('senryus/{senryu}', 'OgpController')->middleware([
-    App\Http\Middleware\RedirectIfNotCrawler::class,
+    'crawler',
 ]);
 
 Route::get('{any}', 'SpaController')->where('any', '^(?!(api|storage)($|/)).*');

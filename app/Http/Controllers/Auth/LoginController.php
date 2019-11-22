@@ -35,12 +35,14 @@ class LoginController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $token = \Auth::attempt($request->only(['email', 'password']));
+        $token = \Auth::attempt($request->only('email', 'password'));
 
         if ($token === false) {
             throw new AuthenticationException();
         }
 
-        return response()->json(compact('token'));
+        return response()->json(array_merge(compact('token'), [
+            'user' => \Auth::user(),
+        ]));
     }
 }
