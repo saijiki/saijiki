@@ -8,7 +8,7 @@ class OgpController extends Controller
 {
     /**
      * @param  \App\Senryu  $senryu
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function __invoke(Senryu $senryu)
     {
