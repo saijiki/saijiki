@@ -8,6 +8,16 @@ use App\Senryu;
 class SenryuController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api')->only('store', 'update', 'destroy');
+    }
+
+    /**
      * 川柳一覧を取得する。
      *
      * @param  \Illuminate\Http\Request  $request
