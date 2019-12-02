@@ -11,4 +11,8 @@
 |
 */
 
-Route::get('/{any}', 'SpaController')->where('any', '^(?!(api|storage)($|/)).*');
+Route::get('senryus/{senryu}', 'OgpController')->middleware([
+    'crawler',
+]);
+
+Route::get('{any}', 'SpaController')->where('any', '^(?!(api|storage)($|/)).*');

@@ -1,6 +1,6 @@
 module.exports = {
     outputDir: '../public',
-    indexPath: '../resources/views/welcome.blade.php',
+    indexPath: '../resources/views/spa.blade.php',
     configureWebpack: {
         performance: { hints: false },
     },
