@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Symfony\Component\Process\Process;
 use Aws\Rekognition\RekognitionClient;
+use Aws\Translate\TranslateClient;
+use Aws\Exception\AwsException;
 
 class Senryu extends Model
 {
@@ -113,10 +115,10 @@ class Senryu extends Model
     }
 
     /**
-     * 画像認識
+     * 画像からキーワードを生成する。
      *
      * @param string $photo
-     * @return \AWS\Result
+     * @return array
      */
     public static function imageAnalysis($photo)
     {
@@ -130,21 +132,20 @@ class Senryu extends Model
                 'secret'  => env('AWS_SECRET_ACCESS_KEY'),
             ]
         ];
-        $mime = (new \finfo(FILEINFO_EXTENSION))->buffer($photo);
+
+        // TODO:jpgファイルなどをpngに変換しても読み照れる？。
+        // 読み取れなければ、変更
+//        $mime = (new \finfo(FILEINFO_EXTENSION))->buffer($photo);
 
         $photo = file_get_contents($photo);
 
+        //　ファイル名取得
         $timestamp =  \Date::now()->format("YmdHisv");
-        \Storage::put(storage_path('public/uploaded/'. $timestamp .'.png'), $photo);
+        \Storage::put('public/uploaded/'. $timestamp .'.png', $photo);
 
         $rekognition = new RekognitionClient($options);
 
-        // 画像取得
-//        $photo = asset("storage/uploaded/thumb_bg_susitop.jpg");
-//        $fp_image = fopen($photo, 'r');
-//        $image = fread($fp_image, filesize($photo));
-//        fclose($fp_image);
-
+        // TODO:不適切コンテンツを検出するなら必要。
         // AWS Rekognition => 画像規制ラベル検出
 //        $keyword1 = $rekognition->detectModerationLabels(array(
 //                'Image' => array(
@@ -155,18 +156,25 @@ class Senryu extends Model
 //        );
 
         // AWS Rekognition => 画像ラベル検出
-//        $keyword = $rekognition->detectLabels(array(
-//                'Image' => array(
-//                    'Bytes' => $photo,
-//                ),
-//                'Attributes' => array('Name')
-//            )
-//        );
-//
-//        $keyword = collect($keyword["Labels"])->pluck('Name');
-//
-//        return $keyword;
-        return null;
+        $keyword = $rekognition->detectLabels(array(
+                'Image' => array(
+                    'Bytes' => $photo,
+                ),
+                'Attributes' => array('Name')
+            )
+        );
+        // Label →　Nameのみ配列に変換
+        $keyword = collect($keyword["Labels"])->pluck('Name');
+
+        //　キーワードランダム抽出
+        $keyword = $keyword->shuffle()->shift();
+
+        //　翻訳
+        $keyword = self::keywordTranslate($keyword, $options);
+
+        \Log::debug($keyword);
+
+        return $keyword;
     }
 
     /**
@@ -267,5 +275,35 @@ class Senryu extends Model
         $sentence = str_replace('ョ', '', $sentence);
 
         return mb_strlen($sentence);
+    }
+
+    /**
+     * キーワードを英語から日本語へ翻訳する
+     *
+     * @param string $keyword
+     * @param array $options
+     * @return string
+     */
+    private static function keywordTranslate(string $keyword, array $options)
+    {
+        $translate_word = "";
+        $sourceLanguage = 'en';
+        $targetLanguage= 'ja';
+
+        // AWS Translate呼び出し
+        $translate = new TranslateClient($options);
+
+        try {
+            $translate_word = $translate->translateText([
+                'SourceLanguageCode' => $sourceLanguage,
+                'TargetLanguageCode' => $targetLanguage,
+                'Text' => $keyword,
+            ]);
+
+        }catch (AwsException $e) {
+            //
+        }
+
+        return $translate_word;
     }
 }
