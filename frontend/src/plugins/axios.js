@@ -15,4 +15,18 @@ axios.interceptors.request.use(config => {
     return config;
 });
 
+axios.interceptors.response.use(null, async error => {
+    if (error.config.url.startsWith('/api/auth')) {
+        throw error;
+    }
+
+    if (error.response.status === 401) {
+        await store.dispatch('loginGuest');
+
+        return axios.request(error.config);
+    }
+
+    throw error;
+});
+
 Vue.prototype.$axios = axios;

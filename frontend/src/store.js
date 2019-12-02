@@ -12,6 +12,16 @@ const store = new Vuex.Store({
         setData: (state, data) => (state.data = data),
     },
     actions: {
+        async loginGuest({ commit }) {
+            try {
+                const { data } = await axios.post('/api/auth/login/guest');
+
+                commit('setData', data);
+            } catch (e) {
+                commit('setData', null);
+                throw e;
+            }
+        },
         async login({ commit }, { email, password }) {
             try {
                 const { data } = await axios.post('/api/auth/login', {

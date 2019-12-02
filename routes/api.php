@@ -12,6 +12,8 @@
 */
 
 Route::namespace('Auth')->prefix('auth')->name('auth.')->group(function () {
+    Route::post('login/guest', 'GuestLoginController')->name('login.guest');
+
     Route::post('login', 'LoginController')->name('login');
     Route::post('register', 'RegisterController')->name('register');
     Route::post('logout', 'LogoutController')->name('logout');
