@@ -25,6 +25,24 @@ const store = new Vuex.Store({
                 throw e;
             }
         },
+        async register(
+            { commit },
+            { name, email, password, password_confirmation }
+        ) {
+            try {
+                const { data } = await axios.post('/api/auth/register', {
+                    name,
+                    email,
+                    password,
+                    password_confirmation,
+                });
+
+                commit('setData', data);
+            } catch (e) {
+                commit('setData', null);
+                throw e;
+            }
+        },
         async logout({ commit }) {
             try {
                 await axios.post('/api/auth/logout');
