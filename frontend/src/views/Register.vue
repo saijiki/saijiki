@@ -2,38 +2,57 @@
     <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
             <v-col cols="12" sm="8" md="4">
-                <v-toolbar color="transparent" flat>
-                    <v-toolbar-title>新規登録</v-toolbar-title>
-                    <v-spacer />
-                </v-toolbar>
-
-                <v-card-text>
-                    <v-form>
-                        <v-text-field
-                            label="ユーザ名"
-                            name="name"
-                            type="text"
-                            solo
-                        />
-                        <v-text-field
-                            label="メール"
-                            name="login"
-                            type="text"
-                            solo
-                        />
-                        <v-text-field
-                            id="password"
-                            label="パスワード"
-                            name="password"
-                            type="password"
-                            solo
-                        />
-                    </v-form>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn color="primary">登録</v-btn>
-                </v-card-actions>
+                <form @submit.prevent="onSubmit">
+                    <v-card>
+                        <v-toolbar color="transparent" flat>
+                            <v-toolbar-title>
+                                新規登録
+                            </v-toolbar-title>
+                        </v-toolbar>
+                        <v-card-text>
+                            <v-text-field
+                                v-model="name"
+                                label="ユーザー名"
+                                prepend-icon="fas fa-user"
+                                required
+                            />
+                            <v-text-field
+                                v-model="email"
+                                label="メールアドレス"
+                                prepend-icon="fas fa-envelope"
+                                required
+                                type="email"
+                            />
+                            <v-text-field
+                                v-model="password"
+                                counter
+                                label="パスワード"
+                                prepend-icon="fas fa-lock"
+                                required
+                                type="password"
+                            />
+                            <v-text-field
+                                v-model="passwordConfirmation"
+                                counter
+                                label="パスワードの確認"
+                                prepend-icon="fas fa-lock"
+                                required
+                                type="password"
+                            />
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer />
+                            <v-btn
+                                class="mr-2"
+                                color="primary"
+                                :loading="isLoading"
+                                type="submit"
+                            >
+                                新規登録
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </form>
             </v-col>
         </v-row>
     </v-container>
@@ -41,6 +60,48 @@
 
 <script>
 export default {
-    //
+    data: () => ({
+        email: '',
+        isLoading: false,
+        name: '',
+        password: '',
+        passwordConfirmation: '',
+    }),
+    methods: {
+        async onSubmit() {
+            if (this.isLoading) {
+                return;
+            }
+
+            this.isLoading = true;
+
+            try {
+                await this.$store.dispatch('register', {
+                    name: this.name,
+                    email: this.email,
+                    password: this.password,
+                    password_confirmation: this.passwordConfirmation,
+                });
+
+                this.$router.push({ name: 'Home' });
+
+                alert('新規登録に成功しました。');
+            } catch ({ response: { data } }) {
+                alert(
+                    Object.values(data.errors)
+                        .flat()
+                        .join('\n')
+                );
+            } finally {
+                this.isLoading = false;
+            }
+        },
+    },
 };
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-icon {
+    font-size: 16px;
+}
+</style>
