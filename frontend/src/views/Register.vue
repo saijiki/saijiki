@@ -26,7 +26,9 @@
                             <v-text-field
                                 v-model="password"
                                 counter
+                                hint="8文字以上のパスワード"
                                 label="パスワード"
+                                persistent-hint
                                 prepend-icon="fas fa-lock"
                                 required
                                 type="password"
@@ -40,10 +42,9 @@
                                 type="password"
                             />
                         </v-card-text>
-                        <v-card-actions>
+                        <v-card-actions class="pr-4 pb-4">
                             <v-spacer />
                             <v-btn
-                                class="mr-2"
                                 color="primary"
                                 :loading="isLoading"
                                 type="submit"
