@@ -11,19 +11,9 @@ class LogoutController extends Controller
     | Logout Controller
     |--------------------------------------------------------------------------
     |
-    | Log the user out of the application.
+    | This controller handles log the user out of the application.
     |
     */
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
 
     /**
      * @return \Illuminate\Http\JsonResponse
