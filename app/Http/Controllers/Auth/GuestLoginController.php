@@ -22,7 +22,7 @@ class GuestLoginController extends Controller
      */
     public function __invoke()
     {
-        $token = \Auth::setTTL(86400)->login(
+        $token = \Auth::setTTL(1440)->login(
             User::create([
                 'twitter_id' => null,
                 'name' => 'ゲスト',
