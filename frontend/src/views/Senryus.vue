@@ -2,7 +2,11 @@
     <v-container>
         <v-row>
             <v-col cols="12" lg="4" md="6">
-                <v-row class="mx-auto" no-gutters :style="{ maxWidth: '360px' }">
+                <v-row
+                    class="mx-auto"
+                    no-gutters
+                    :style="{ maxWidth: '360px' }"
+                >
                     <v-col cols="6">
                         <v-select
                             v-model="currentPeriod"
@@ -107,13 +111,13 @@ export default {
                     this.getSenryus();
                 } else {
                     this.$router.push({
-                      query: {
-                          page,
-                          word: this.word,
-                          period: this.period,
-                          order: this.order,
-                    }
-                  });
+                        query: {
+                            page,
+                            word: this.word,
+                            period: this.period,
+                            order: this.order,
+                        },
+                    });
                 }
             },
         },
@@ -126,13 +130,13 @@ export default {
                     this.getSenryus();
                 } else {
                     this.$router.push({
-                      query: {
-                          page: this.page,
-                          word: this.word,
-                          period,
-                          order: this.order,
-                    }
-                  });
+                        query: {
+                            page: this.page,
+                            word: this.word,
+                            period,
+                            order: this.order,
+                        },
+                    });
                 }
             },
         },
@@ -145,13 +149,13 @@ export default {
                     this.getSenryus();
                 } else {
                     this.$router.push({
-                      query: {
-                          page: this.page,
-                          word: this.word,
-                          period: this.period,
-                          order,
-                    }
-                  });
+                        query: {
+                            page: this.page,
+                            word: this.word,
+                            period: this.period,
+                            order,
+                        },
+                    });
                 }
             },
         },
@@ -188,13 +192,13 @@ export default {
         },
         async onSubmit() {
             this.$router.push({
-              query: {
-                  page: this.page,
-                  word: this.filter,
-                  period: this.period,
-                  order: this.order,
-            }
-          });
+                query: {
+                    page: this.page,
+                    word: this.filter,
+                    period: this.period,
+                    order: this.order,
+                },
+            });
         },
     },
 };
