@@ -90,7 +90,7 @@ for i, char in enumerate(TARGET_SENTENCE_3):
     draw.text((sentence_3_x + (FONT_SIZE - sentence_3_widths[i]) / 2 + 1, sentence_3_y + sum(sentence_3_heights[:i]) + 1), char, fill='black', font=font)
 
 # 合成画像を出力
-image.save(f'../public/{OUTPUT_FILE_NAME}')
+image.save(f'../public/generated/{OUTPUT_FILE_NAME}')
 
 # 合成画像の出力先ファイル名を出力
 print(OUTPUT_FILE_NAME, end='')

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Symfony\Component\Process\Process;
+use Aws\Rekognition\RekognitionClient;
 
 class Senryu extends Model
 {
@@ -107,8 +108,65 @@ class Senryu extends Model
         $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
 
         return self::create([
-            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}"),
+            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/generated/{$filename}"),
         ]);
+    }
+
+    /**
+     * 画像認識
+     *
+     * @param string $photo
+     * @return \AWS\Result
+     */
+    public static function imageAnalysis($photo)
+    {
+        $keyword = null;
+
+        $options = [
+            'region'            => env('AWS_DEFAULT_REGION'),
+            'version'           => 'latest',
+            'credentials' => [
+                'key' => env('AWS_ACCESS_KEY_ID'),
+                'secret'  => env('AWS_SECRET_ACCESS_KEY'),
+            ]
+        ];
+        $mime = (new \finfo(FILEINFO_EXTENSION))->buffer($photo);
+
+        $photo = file_get_contents($photo);
+
+        $timestamp =  \Date::now()->format("YmdHisv");
+        \Storage::put(storage_path('public/uploaded/'. $timestamp .'.png'), $photo);
+
+        $rekognition = new RekognitionClient($options);
+
+        // 画像取得
+//        $photo = asset("storage/uploaded/thumb_bg_susitop.jpg");
+//        $fp_image = fopen($photo, 'r');
+//        $image = fread($fp_image, filesize($photo));
+//        fclose($fp_image);
+
+        // AWS Rekognition => 画像規制ラベル検出
+//        $keyword1 = $rekognition->detectModerationLabels(array(
+//                'Image' => array(
+//                    'Bytes' => $photo,
+//                ),
+//                'Attributes' => array('Name')
+//            )
+//        );
+
+        // AWS Rekognition => 画像ラベル検出
+//        $keyword = $rekognition->detectLabels(array(
+//                'Image' => array(
+//                    'Bytes' => $photo,
+//                ),
+//                'Attributes' => array('Name')
+//            )
+//        );
+//
+//        $keyword = collect($keyword["Labels"])->pluck('Name');
+//
+//        return $keyword;
+        return null;
     }
 
     /**
