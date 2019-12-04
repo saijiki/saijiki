@@ -122,7 +122,7 @@ class Senryu extends Model
      */
     public static function imageAnalysis($photo)
     {
-        $keyword = null;
+        $keyword = "";
 
         $options = [
             'region'            => env('AWS_DEFAULT_REGION'),
@@ -171,8 +171,6 @@ class Senryu extends Model
 
         //　翻訳
         $keyword = self::keywordTranslate($keyword, $options);
-
-        \Log::debug($keyword);
 
         return $keyword;
     }
@@ -282,11 +280,11 @@ class Senryu extends Model
      *
      * @param string $keyword
      * @param array $options
-     * @return string
+     * @return array
      */
     private static function keywordTranslate(string $keyword, array $options)
     {
-        $translate_word = "";
+        $translate_word = $keyword;
         $sourceLanguage = 'en';
         $targetLanguage= 'ja';
 
@@ -297,13 +295,14 @@ class Senryu extends Model
             $translate_word = $translate->translateText([
                 'SourceLanguageCode' => $sourceLanguage,
                 'TargetLanguageCode' => $targetLanguage,
-                'Text' => $keyword,
+                'Text' => $translate_word,
             ]);
+            $translate_word = $translate_word->get("TranslatedText");
 
         }catch (AwsException $e) {
             //
         }
 
-        return $translate_word;
+        return array($translate_word);
     }
 }
