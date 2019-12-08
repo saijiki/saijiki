@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Aws\Rekognition\RekognitionClient;
 use Aws\Translate\TranslateClient;
@@ -166,11 +167,8 @@ class Senryu extends Model
         // Label →　Nameのみ配列に変換
         $keyword = collect($keyword["Labels"])->pluck('Name');
 
-        //　キーワードランダム抽出
-        $keyword = $keyword->shuffle()->shift();
-
         //　翻訳
-        $keyword = self::keywordTranslate($keyword, $options);
+        $keyword = self::keywordTranslate($keyword->toArray(), $options);
 
         return $keyword;
     }
@@ -278,15 +276,17 @@ class Senryu extends Model
     /**
      * キーワードを英語から日本語へ翻訳する
      *
-     * @param string $keyword
-     * @param array $options
+     * @param array $keywords 検出ラベル
+     * @param array $options AWS設定
      * @return array
      */
-    private static function keywordTranslate(string $keyword, array $options)
+    private static function keywordTranslate(array $keywords, array $options)
     {
-        $translate_word = $keyword;
         $sourceLanguage = 'en';
         $targetLanguage= 'ja';
+
+        //　キーワードランダム抽出
+        $translate_word = collect($keywords)->shuffle()->shift();
 
         // AWS Translate呼び出し
         $translate = new TranslateClient($options);
@@ -298,6 +298,11 @@ class Senryu extends Model
                 'Text' => $translate_word,
             ]);
             $translate_word = $translate_word->get("TranslatedText");
+
+            // 5文字以上　｜　英数字の場合
+            if (preg_match('/^([a-zA-Z0-9]{5,})$/', $translate_word)) {
+                return self::keywordTranslate($keywords, $options);
+            }
 
         }catch (AwsException $e) {
             //
