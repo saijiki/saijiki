@@ -127,11 +127,11 @@ class Senryu extends Model
         $keyword = "";
 
         $options = [
-            'region' => env('AWS_DEFAULT_REGION'),
+            'region' => config('aws.default_region'),
             'version' => 'latest',
             'credentials' => [
-                'key' => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                'key' => config('aws.access_key_id'),
+                'secret' => config('aws.secret_access_key'),
             ]
         ];
 
