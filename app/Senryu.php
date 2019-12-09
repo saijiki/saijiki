@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Aws\Rekognition\RekognitionClient;
@@ -168,7 +169,7 @@ class Senryu extends Model
         $keyword = collect($keyword["Labels"])->pluck('Name');
 
         //　翻訳
-        $keyword = self::keywordTranslate($keyword->toArray(), $options);
+        $keyword = self::keywordTranslate($keyword, $options);
 
         return $keyword;
     }
@@ -276,17 +277,17 @@ class Senryu extends Model
     /**
      * キーワードを英語から日本語へ翻訳する
      *
-     * @param array $keywords 検出ラベル
+     * @param \Illuminate\Support\Collection $keywords 検出ラベル
      * @param array $options AWS設定
      * @return array
      */
-    private static function keywordTranslate(array $keywords, array $options)
+    private static function keywordTranslate(Collection $keywords, array $options)
     {
         $sourceLanguage = 'en';
         $targetLanguage= 'ja';
 
         //　キーワードランダム抽出
-        $translate_word = collect($keywords)->shuffle()->shift();
+        $translate_word = $keywords->shuffle()->shift();
 
         // AWS Translate呼び出し
         $translate = new TranslateClient($options);
