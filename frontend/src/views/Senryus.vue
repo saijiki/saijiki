@@ -50,6 +50,14 @@
             </v-col>
         </v-row>
         <v-row>
+            <v-col v-if="!isLoading && senryus.length === 0" class="text-center" cols="12">
+                <v-layout align-center column justify-center>
+                    <img class="logo" src="@/assets/logo.png" width="192"/>
+                    <strong>
+                        川柳が存在しません
+                    </strong>
+                </v-layout>
+            </v-col>
             <v-col
                 v-for="senryu in senryus"
                 :key="senryu.id"
