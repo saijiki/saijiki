@@ -89,7 +89,7 @@ class Senryu extends Model
     /**
      * 川柳を生成する。
      *
-     * @param  array  $keywords
+     * @param array $keywords
      * @return self
      */
     public static function generate(array $keywords)
@@ -127,11 +127,11 @@ class Senryu extends Model
         $keyword = "";
 
         $options = [
-            'region'            => env('AWS_DEFAULT_REGION'),
-            'version'           => 'latest',
+            'region' => env('AWS_DEFAULT_REGION'),
+            'version' => 'latest',
             'credentials' => [
                 'key' => env('AWS_ACCESS_KEY_ID'),
-                'secret'  => env('AWS_SECRET_ACCESS_KEY'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
             ]
         ];
 
@@ -142,8 +142,8 @@ class Senryu extends Model
         $photo = file_get_contents($photo);
 
         //　ファイル名取得
-        $timestamp =  \Date::now()->format("YmdHisv");
-        \Storage::put('public/uploaded/'. $timestamp .'.png', $photo);
+        $timestamp = \Date::now()->format("YmdHisv");
+        \Storage::put('public/uploaded/' . $timestamp . '.png', $photo);
 
         $rekognition = new RekognitionClient($options);
 
@@ -177,11 +177,11 @@ class Senryu extends Model
     /**
      * 指定された文字数の句を生成する。
      *
-     * @param  int     $chars
-     * @param  array   $morphemes
-     * @param  array   $keywords
-     * @param  string  $surface
-     * @param  string  $reading
+     * @param int $chars
+     * @param array $morphemes
+     * @param array $keywords
+     * @param string $surface
+     * @param string $reading
      * @return array
      */
     private static function generateSentence(int $chars, array $morphemes, array $keywords, string $surface = '', string $reading = '')
@@ -240,9 +240,9 @@ class Senryu extends Model
     /**
      * 指定された川柳の画像を生成する。
      *
-     * @param  string  $sentence_1 初句
-     * @param  string  $sentence_2 二句
-     * @param  string  $sentence_3 結句
+     * @param string $sentence_1 初句
+     * @param string $sentence_2 二句
+     * @param string $sentence_3 結句
      * @return string
      */
     private static function generateImage(string $sentence_1, string $sentence_2, string $sentence_3)
@@ -257,7 +257,7 @@ class Senryu extends Model
     /**
      * 拍を数える。
      *
-     * @param  string  $sentence
+     * @param string $sentence
      * @return int
      */
     private static function calcMora(string $sentence)
@@ -284,7 +284,7 @@ class Senryu extends Model
     private static function keywordTranslate(Collection $keywords, array $options)
     {
         $sourceLanguage = 'en';
-        $targetLanguage= 'ja';
+        $targetLanguage = 'ja';
 
         //　キーワードランダム抽出
         $translate_word = $keywords->shuffle()->shift();
@@ -305,7 +305,7 @@ class Senryu extends Model
                 return self::keywordTranslate($keywords, $options);
             }
 
-        }catch (AwsException $e) {
+        } catch (AwsException $e) {
             //
         }
 

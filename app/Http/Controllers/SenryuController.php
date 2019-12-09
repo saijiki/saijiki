@@ -68,12 +68,11 @@ class SenryuController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->has('image_file_url')) {
+        if ($request->has('image_file_url')) {
             $keyword = Senryu::imageAnalysis($request->get('image_file_url'));
 
             return response()->json(Senryu::generate($keyword));
-        }
-        else {
+        } else {
             return response()->json(Senryu::generate($request->all()));
         }
     }
