@@ -4,7 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
+use Aws\Rekognition\RekognitionClient;
+use Aws\Translate\TranslateClient;
+use Aws\Exception\AwsException;
 
 class Senryu extends Model
 {
@@ -84,7 +89,7 @@ class Senryu extends Model
     /**
      * 川柳を生成する。
      *
-     * @param  array  $keywords
+     * @param array $keywords
      * @return self
      */
     public static function generate(array $keywords)
@@ -107,18 +112,76 @@ class Senryu extends Model
         $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
 
         return self::create([
-            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}"),
+            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/generated/{$filename}"),
         ]);
+    }
+
+    /**
+     * 画像からキーワードを生成する。
+     *
+     * @param string $photo
+     * @return array
+     */
+    public static function imageAnalysis($photo)
+    {
+        $keyword = "";
+
+        $options = [
+            'region' => env('AWS_DEFAULT_REGION'),
+            'version' => 'latest',
+            'credentials' => [
+                'key' => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            ]
+        ];
+
+        // TODO:jpgファイルなどをpngに変換しても読み照れる？。
+        // 読み取れなければ、変更
+//        $mime = (new \finfo(FILEINFO_EXTENSION))->buffer($photo);
+
+        $photo = file_get_contents($photo);
+
+        //　ファイル名取得
+        $timestamp = \Date::now()->format("YmdHisv");
+        \Storage::put('public/uploaded/' . $timestamp . '.png', $photo);
+
+        $rekognition = new RekognitionClient($options);
+
+        // TODO:不適切コンテンツを検出するなら必要。
+        // AWS Rekognition => 画像規制ラベル検出
+//        $keyword1 = $rekognition->detectModerationLabels(array(
+//                'Image' => array(
+//                    'Bytes' => $photo,
+//                ),
+//                'Attributes' => array('Name')
+//            )
+//        );
+
+        // AWS Rekognition => 画像ラベル検出
+        $keyword = $rekognition->detectLabels(array(
+                'Image' => array(
+                    'Bytes' => $photo,
+                ),
+                'Attributes' => array('Name')
+            )
+        );
+        // Label →　Nameのみ配列に変換
+        $keyword = collect($keyword["Labels"])->pluck('Name');
+
+        //　翻訳
+        $keyword = self::keywordTranslate($keyword, $options);
+
+        return $keyword;
     }
 
     /**
      * 指定された文字数の句を生成する。
      *
-     * @param  int     $chars
-     * @param  array   $morphemes
-     * @param  array   $keywords
-     * @param  string  $surface
-     * @param  string  $reading
+     * @param int $chars
+     * @param array $morphemes
+     * @param array $keywords
+     * @param string $surface
+     * @param string $reading
      * @return array
      */
     private static function generateSentence(int $chars, array $morphemes, array $keywords, string $surface = '', string $reading = '')
@@ -177,9 +240,9 @@ class Senryu extends Model
     /**
      * 指定された川柳の画像を生成する。
      *
-     * @param  string  $sentence_1 初句
-     * @param  string  $sentence_2 二句
-     * @param  string  $sentence_3 結句
+     * @param string $sentence_1 初句
+     * @param string $sentence_2 二句
+     * @param string $sentence_3 結句
      * @return string
      */
     private static function generateImage(string $sentence_1, string $sentence_2, string $sentence_3)
@@ -194,7 +257,7 @@ class Senryu extends Model
     /**
      * 拍を数える。
      *
-     * @param  string  $sentence
+     * @param string $sentence
      * @return int
      */
     private static function calcMora(string $sentence)
@@ -209,5 +272,43 @@ class Senryu extends Model
         $sentence = str_replace('ョ', '', $sentence);
 
         return mb_strlen($sentence);
+    }
+
+    /**
+     * キーワードを英語から日本語へ翻訳する
+     *
+     * @param \Illuminate\Support\Collection $keywords 検出ラベル
+     * @param array $options AWS設定
+     * @return array
+     */
+    private static function keywordTranslate(Collection $keywords, array $options)
+    {
+        $sourceLanguage = 'en';
+        $targetLanguage = 'ja';
+
+        //　キーワードランダム抽出
+        $translate_word = $keywords->shuffle()->shift();
+
+        // AWS Translate呼び出し
+        $translate = new TranslateClient($options);
+
+        try {
+            $translate_word = $translate->translateText([
+                'SourceLanguageCode' => $sourceLanguage,
+                'TargetLanguageCode' => $targetLanguage,
+                'Text' => $translate_word,
+            ]);
+            $translate_word = $translate_word->get("TranslatedText");
+
+            // 5文字以上　｜　英数字の場合
+            if (preg_match('/^([a-zA-Z0-9]{5,})$/', $translate_word)) {
+                return self::keywordTranslate($keywords, $options);
+            }
+
+        } catch (AwsException $e) {
+            //
+        }
+
+        return array($translate_word);
     }
 }
