@@ -40,6 +40,11 @@ export default new Router({
             component: () => import('@/views/Register'),
         },
         {
+            path: '/useredit',
+            name: 'UserEdit',
+            component: () => import('@/views/UserEdit'),
+        },
+        {
             path: '*',
             component: () => import('@/views/NotFound'),
         },
