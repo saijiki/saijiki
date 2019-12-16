@@ -2,14 +2,15 @@
 
 namespace App;
 
+use Aws\Exception\AwsException;
+use Aws\Rekognition\RekognitionClient;
+use Aws\Translate\TranslateClient;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Symfony\Component\Process\Process;
 
 class Senryu extends Model
 {
-    use SoftDeletes;
-
     /**
      * The attributes that aren't mass assignable.
      *
@@ -19,18 +20,15 @@ class Senryu extends Model
         'id',
         'created_at',
         'updated_at',
-        'deleted_at',
     ];
 
     /**
-     * The attributes that should be mutated to dates.
+     * The model's default values for attributes.
      *
      * @var array
      */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    protected $attributes = [
+        'goods' => 0,
     ];
 
     /**
@@ -39,61 +37,63 @@ class Senryu extends Model
      * @var array
      */
     protected $appends = [
-        'created_at_history',
-        'updated_at_history',
+        'diff_from_created_at_to_now',
+        'diff_from_updated_at_to_now',
     ];
 
     /**
      * @return string
      */
-    public function getCreatedAtHistoryAttribute()
+    public function getDiffFromCreatedAtToNowAttribute()
     {
-        $methods = [
-            '日前' => 'diffInDays',
-            '時間前' => 'diffInHours',
-            '分前' => 'diffInMinutes',
-            '秒前' => 'diffInSeconds',
-        ];
+        $now = now();
 
-        foreach ($methods as $key => $method) {
-            if ($history = \Date::now()->$method($this->created_at)) {
-                return "{$history}{$key}";
+        foreach (['日' => 'diffInDays', '時間' => 'diffInHours', '分' => 'diffInMinutes'] as $unit => $method) {
+            if (($diff = $now->$method($this->created_at)) === 0) {
+                continue;
             }
+
+            return "{$diff}{$unit}前";
         }
+
+        return "{$now->diffInSeconds($this->created_at)}秒前";
     }
 
     /**
      * @return string
      */
-    public function getUpdatedAtHistoryAttribute()
+    public function getDiffFromUpdatedAtToNowAttribute()
     {
-        $methods = [
-            '日前' => 'diffInDays',
-            '時間前' => 'diffInHours',
-            '分前' => 'diffInMinutes',
-            '秒前' => 'diffInSeconds',
-        ];
+        $now = now();
 
-        foreach ($methods as $key => $method) {
-            if ($history = \Date::now()->$method($this->updated_at)) {
-                return "{$history}{$key}";
+        foreach (['日' => 'diffInDays', '時間' => 'diffInHours', '分' => 'diffInMinutes'] as $unit => $method) {
+            if (($diff = $now->$method($this->updated_at)) === 0) {
+                continue;
             }
+
+            return "{$diff}{$unit}前";
         }
+
+        return "{$now->diffInSeconds($this->updated_at)}秒前";
     }
 
     /**
      * 川柳を生成する。
      *
-     * @param  array  $keywords
+     * @param string $keywords
      * @return self
      */
-    public static function generate(array $keywords)
+    public static function generate(string $keyword)
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
         for ($i = 0, $j = 1; $i < 3; $i++, $j++) {
             try {
-                list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence([5, 7, 5][$i], $morphemes, ${"keywords_{$i}"} ?? $keywords);
+                list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence(
+                    [5, 7, 5][$i],
+                    $morphemes,
+                    ${"keywords_{$i}"} ?? [$keyword]
+                );
             } catch (\Exception $e) {
                 if ($i < 1) {
                     throw $e;
@@ -104,21 +104,83 @@ class Senryu extends Model
             }
         }
 
-        $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
+        $filename = self::generateImage($keyword, $sentence_1, $sentence_2, $sentence_3);
 
         return self::create([
-            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/{$filename}"),
+            'user_id' => \Auth::id(),
+            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}",
+            'uploaded_image_url' => null,
+            'generated_image_url' => asset("storage/generated/{$filename}"),
+            'is_public' => true,
         ]);
+    }
+
+    /**
+     * 画像からキーワードを生成する。
+     *
+     * @param string $photo
+     * @return string
+     */
+    public static function imageAnalysis($photo)
+    {
+        $keyword = "";
+
+        $options = [
+            'region' => config('aws.default_region'),
+            'version' => 'latest',
+            'credentials' => [
+                'key' => config('aws.access_key_id'),
+                'secret' => config('aws.secret_access_key'),
+            ]
+        ];
+
+        // TODO:jpgファイルなどをpngに変換しても読み照れる？。
+        // 読み取れなければ、変更
+//        $mime = (new \finfo(FILEINFO_EXTENSION))->buffer($photo);
+
+        $photo = file_get_contents($photo);
+
+        //　ファイル名取得
+        $timestamp = \Date::now()->format("YmdHisv");
+        \Storage::put('public/uploaded/' . $timestamp . '.png', $photo);
+
+        $rekognition = new RekognitionClient($options);
+
+        // TODO:不適切コンテンツを検出するなら必要。
+        // AWS Rekognition => 画像規制ラベル検出
+//        $keyword1 = $rekognition->detectModerationLabels(array(
+//                'Image' => array(
+//                    'Bytes' => $photo,
+//                ),
+//                'Attributes' => array('Name')
+//            )
+//        );
+
+        // AWS Rekognition => 画像ラベル検出
+        $keyword = $rekognition->detectLabels(array(
+                'Image' => array(
+                    'Bytes' => $photo,
+                ),
+                'Attributes' => array('Name')
+            )
+        );
+        // Label →　Nameのみ配列に変換
+        $keyword = collect($keyword["Labels"])->pluck('Name');
+
+        //　翻訳
+        $keyword = self::keywordTranslate($keyword, $options);
+
+        return $keyword;
     }
 
     /**
      * 指定された文字数の句を生成する。
      *
-     * @param  int     $chars
-     * @param  array   $morphemes
-     * @param  array   $keywords
-     * @param  string  $surface
-     * @param  string  $reading
+     * @param int $chars
+     * @param array $morphemes
+     * @param array $keywords
+     * @param string $surface
+     * @param string $reading
      * @return array
      */
     private static function generateSentence(int $chars, array $morphemes, array $keywords, string $surface = '', string $reading = '')
@@ -177,14 +239,15 @@ class Senryu extends Model
     /**
      * 指定された川柳の画像を生成する。
      *
-     * @param  string  $sentence_1 初句
-     * @param  string  $sentence_2 二句
-     * @param  string  $sentence_3 結句
+     * @param string $keyword
+     * @param string $sentence_1 初句
+     * @param string $sentence_2 二句
+     * @param string $sentence_3 結句
      * @return string
      */
-    private static function generateImage(string $sentence_1, string $sentence_2, string $sentence_3)
+    private static function generateImage(string $keyword,string $sentence_1, string $sentence_2, string $sentence_3)
     {
-        $process = new Process(['python3', 'saijiki_img.py', $sentence_1, $sentence_2, $sentence_3]);
+        $process = new Process(['python3', 'saijiki_img.py', $keyword, $sentence_1, $sentence_2, $sentence_3]);
         $process->setWorkingDirectory(storage_path('app/python'));
         $process->run();
 
@@ -194,7 +257,7 @@ class Senryu extends Model
     /**
      * 拍を数える。
      *
-     * @param  string  $sentence
+     * @param string $sentence
      * @return int
      */
     private static function calcMora(string $sentence)
@@ -209,5 +272,52 @@ class Senryu extends Model
         $sentence = str_replace('ョ', '', $sentence);
 
         return mb_strlen($sentence);
+    }
+
+    /**
+     * キーワードを英語から日本語へ翻訳する
+     *
+     * @param \Illuminate\Support\Collection $keywords 検出ラベル
+     * @param array $options AWS設定
+     * @return string
+     */
+    private static function keywordTranslate(Collection $keywords, array $options)
+    {
+        $sourceLanguage = 'en';
+        $targetLanguage = 'ja';
+
+        //　キーワードランダム抽出
+        $translate_word = $keywords->map(function ($keyword) {
+            return strtolower($keyword);
+        })
+            ->shuffle()
+            ->shift();
+
+        // AWS Translate呼び出し
+        $translate = new TranslateClient($options);
+
+        try {
+            $translate_word = $translate->translateText([
+                'SourceLanguageCode' => $sourceLanguage,
+                'TargetLanguageCode' => $targetLanguage,
+                'Text' => $translate_word,
+            ]);
+            $translate_word = $translate_word->get('TranslatedText');
+            $translate_word = preg_replace('/だ$/', '', $translate_word);
+            $translate_word = preg_replace('/て$/', '', $translate_word);
+            $translate_word = preg_replace('/に$/', '', $translate_word);
+            $translate_word = preg_replace('/を$/', '', $translate_word);
+            $translate_word = preg_replace('/は$/', '', $translate_word);
+
+            // 5文字以上　｜　英数字の場合
+            if (preg_match('/^([a-zA-Z0-9]{5,})$/', $translate_word)) {
+                return self::keywordTranslate($keywords, $options);
+            }
+
+        } catch (AwsException $e) {
+            //
+        }
+
+        return $translate_word;
     }
 }
