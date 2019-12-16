@@ -16,11 +16,12 @@ class SnsBaseController extends Controller{
   public function authCallback() {
     // 3. ユーザー情報の取得（ここでめちゃくちゃ詰んだ！）
     $user_info = $this->getProviderUserInfo('twitter');
-
     $twitterUser = Socialite::driver('twitter')->user();
+
     $user->getId();
     $user->getNickname();
     $user->getName();
+    $user->getAvater();
   }
 
   // 3. ユーザー情報の取得（ここでめちゃくちゃ詰んだ！）
