@@ -30,7 +30,7 @@ class SenryuController extends Controller
 
         $builder = Senryu::select([
             'id',
-            'path',
+            'generated_image_url',
             'created_at',
             'updated_at',
         ]);

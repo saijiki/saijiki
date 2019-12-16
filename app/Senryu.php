@@ -2,19 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\Process\Process;
+use Aws\Exception\AwsException;
 use Aws\Rekognition\RekognitionClient;
 use Aws\Translate\TranslateClient;
-use Aws\Exception\AwsException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Symfony\Component\Process\Process;
 
 class Senryu extends Model
 {
-    use SoftDeletes;
-
     /**
      * The attributes that aren't mass assignable.
      *
@@ -24,18 +20,15 @@ class Senryu extends Model
         'id',
         'created_at',
         'updated_at',
-        'deleted_at',
     ];
 
     /**
-     * The attributes that should be mutated to dates.
+     * The model's default values for attributes.
      *
      * @var array
      */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    protected $attributes = [
+        'goods' => 0,
     ];
 
     /**
@@ -44,46 +37,44 @@ class Senryu extends Model
      * @var array
      */
     protected $appends = [
-        'created_at_history',
-        'updated_at_history',
+        'diff_from_created_at_to_now',
+        'diff_from_updated_at_to_now',
     ];
 
     /**
      * @return string
      */
-    public function getCreatedAtHistoryAttribute()
+    public function getDiffFromCreatedAtToNowAttribute()
     {
-        $methods = [
-            '日前' => 'diffInDays',
-            '時間前' => 'diffInHours',
-            '分前' => 'diffInMinutes',
-            '秒前' => 'diffInSeconds',
-        ];
+        $now = now();
 
-        foreach ($methods as $key => $method) {
-            if ($history = \Date::now()->$method($this->created_at)) {
-                return "{$history}{$key}";
+        foreach (['日' => 'diffInDays', '時間' => 'diffInHours', '分' => 'diffInMinutes'] as $unit => $method) {
+            if (($diff = $now->$method($this->created_at)) === 0) {
+                continue;
             }
+
+            return "{$diff}{$unit}前";
         }
+
+        return "{$now->diffInSeconds($this->created_at)}秒前";
     }
 
     /**
      * @return string
      */
-    public function getUpdatedAtHistoryAttribute()
+    public function getDiffFromUpdatedAtToNowAttribute()
     {
-        $methods = [
-            '日前' => 'diffInDays',
-            '時間前' => 'diffInHours',
-            '分前' => 'diffInMinutes',
-            '秒前' => 'diffInSeconds',
-        ];
+        $now = now();
 
-        foreach ($methods as $key => $method) {
-            if ($history = \Date::now()->$method($this->updated_at)) {
-                return "{$history}{$key}";
+        foreach (['日' => 'diffInDays', '時間' => 'diffInHours', '分' => 'diffInMinutes'] as $unit => $method) {
+            if (($diff = $now->$method($this->updated_at)) === 0) {
+                continue;
             }
+
+            return "{$diff}{$unit}前";
         }
+
+        return "{$now->diffInSeconds($this->updated_at)}秒前";
     }
 
     /**
@@ -116,7 +107,11 @@ class Senryu extends Model
         $filename = self::generateImage($keyword, $sentence_1, $sentence_2, $sentence_3);
 
         return self::create([
-            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}", 'path' => asset("storage/generated/{$filename}"),
+            'user_id' => \Auth::id(),
+            'body' => "{$sentence_1} {$sentence_2} {$sentence_3}",
+            'uploaded_image_url' => null,
+            'generated_image_url' => asset("storage/generated/{$filename}"),
+            'is_public' => true,
         ]);
     }
 
@@ -124,18 +119,18 @@ class Senryu extends Model
      * 画像からキーワードを生成する。
      *
      * @param string $photo
-     * @return array
+     * @return string
      */
     public static function imageAnalysis($photo)
     {
         $keyword = "";
 
         $options = [
-            'region' => env('AWS_DEFAULT_REGION'),
+            'region' => config('aws.default_region'),
             'version' => 'latest',
             'credentials' => [
-                'key' => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                'key' => config('aws.access_key_id'),
+                'secret' => config('aws.secret_access_key'),
             ]
         ];
 
@@ -284,7 +279,7 @@ class Senryu extends Model
      *
      * @param \Illuminate\Support\Collection $keywords 検出ラベル
      * @param array $options AWS設定
-     * @return array
+     * @return string
      */
     private static function keywordTranslate(Collection $keywords, array $options)
     {
@@ -292,7 +287,11 @@ class Senryu extends Model
         $targetLanguage = 'ja';
 
         //　キーワードランダム抽出
-        $translate_word = $keywords->shuffle()->shift();
+        $translate_word = $keywords->map(function ($keyword) {
+            return strtolower($keyword);
+        })
+            ->shuffle()
+            ->shift();
 
         // AWS Translate呼び出し
         $translate = new TranslateClient($options);
@@ -303,7 +302,12 @@ class Senryu extends Model
                 'TargetLanguageCode' => $targetLanguage,
                 'Text' => $translate_word,
             ]);
-            $translate_word = $translate_word->get("TranslatedText");
+            $translate_word = $translate_word->get('TranslatedText');
+            $translate_word = preg_replace('/だ$/', '', $translate_word);
+            $translate_word = preg_replace('/て$/', '', $translate_word);
+            $translate_word = preg_replace('/に$/', '', $translate_word);
+            $translate_word = preg_replace('/を$/', '', $translate_word);
+            $translate_word = preg_replace('/は$/', '', $translate_word);
 
             // 5文字以上　｜　英数字の場合
             if (preg_match('/^([a-zA-Z0-9]{5,})$/', $translate_word)) {
@@ -314,6 +318,6 @@ class Senryu extends Model
             //
         }
 
-        return array($translate_word);
+        return $translate_word;
     }
 }

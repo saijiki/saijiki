@@ -19,7 +19,7 @@
                     <v-card
                         color="white"
                         height="0"
-                        :img="senryu.path"
+                        :img="senryu.generated_image_url"
                         raised
                         :style="{ paddingTop: '111.111111111%' }"
                         tag="a"
@@ -46,7 +46,7 @@
                                         fas fa-history
                                     </v-icon>
 
-                                    {{ senryu.created_at_history }}
+                                    {{ senryu.diff_from_created_at_to_now }}
                                 </v-layout>
                             </div>
 
@@ -57,11 +57,11 @@
                                     icon
                                     large
                                     :ripple="false"
-                                    @click.stop="senryu.good++"
+                                    @click.stop="senryu.goods++"
                                 >
                                     <v-badge color="deep-orange">
                                         <template #badge>
-                                            {{ senryu.good }}
+                                            {{ senryu.goods }}
                                         </template>
                                         <v-icon>
                                             far fa-thumbs-up

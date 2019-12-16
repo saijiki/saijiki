@@ -4,7 +4,7 @@
         color="white"
         exact
         height="400"
-        :img="senryu.path"
+        :img="senryu.generated_image_url"
         raised
         :ripple="false"
         :to="{ name: 'SenryuDetail', params: { id: senryu.id } }"
