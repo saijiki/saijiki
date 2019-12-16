@@ -302,7 +302,12 @@ class Senryu extends Model
                 'TargetLanguageCode' => $targetLanguage,
                 'Text' => $translate_word,
             ]);
-            $translate_word = $translate_word->get("TranslatedText");
+            $translate_word = $translate_word->get('TranslatedText');
+            $translate_word = preg_replace('/だ$/', '', $translate_word);
+            $translate_word = preg_replace('/て$/', '', $translate_word);
+            $translate_word = preg_replace('/に$/', '', $translate_word);
+            $translate_word = preg_replace('/を$/', '', $translate_word);
+            $translate_word = preg_replace('/は$/', '', $translate_word);
 
             // 5文字以上　｜　英数字の場合
             if (preg_match('/^([a-zA-Z0-9]{5,})$/', $translate_word)) {
