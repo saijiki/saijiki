@@ -119,7 +119,7 @@ class Senryu extends Model
      * 画像からキーワードを生成する。
      *
      * @param string $photo
-     * @return array
+     * @return string
      */
     public static function imageAnalysis($photo)
     {
@@ -279,7 +279,7 @@ class Senryu extends Model
      *
      * @param \Illuminate\Support\Collection $keywords 検出ラベル
      * @param array $options AWS設定
-     * @return array
+     * @return string
      */
     private static function keywordTranslate(Collection $keywords, array $options)
     {
@@ -287,7 +287,11 @@ class Senryu extends Model
         $targetLanguage = 'ja';
 
         //　キーワードランダム抽出
-        $translate_word = $keywords->shuffle()->shift();
+        $translate_word = $keywords->map(function ($keyword) {
+            return strtolower($keyword);
+        })
+            ->shuffle()
+            ->shift();
 
         // AWS Translate呼び出し
         $translate = new TranslateClient($options);
@@ -309,6 +313,6 @@ class Senryu extends Model
             //
         }
 
-        return array($translate_word);
+        return $translate_word;
     }
 }
