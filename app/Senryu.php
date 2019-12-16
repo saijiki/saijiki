@@ -10,7 +10,6 @@ use Symfony\Component\Process\Process;
 use Aws\Rekognition\RekognitionClient;
 use Aws\Translate\TranslateClient;
 use Aws\Exception\AwsException;
-use function Psy\debug;
 
 class Senryu extends Model
 {
@@ -253,7 +252,6 @@ class Senryu extends Model
      */
     private static function generateImage(string $keyword,string $sentence_1, string $sentence_2, string $sentence_3)
     {
-        \Log::debug($keyword);
         $process = new Process(['python3', 'saijiki_img.py', $keyword, $sentence_1, $sentence_2, $sentence_3]);
         $process->setWorkingDirectory(storage_path('app/python'));
         $process->run();
