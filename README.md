@@ -28,7 +28,7 @@ git clone https://github.com/saijiki/saijiki.git && cd saijiki/laradock
 #### Laradockのセットアップ
 
 ```sh
-cp env-example .env && docker-compose up -d nginx mysql
+cp env-example .env && docker-compose up -d
 ```
 
 #### Laravelのセットアップ
@@ -41,6 +41,8 @@ composer run-script post-root-package-install
 composer run-script post-create-project-cmd
 
 php artisan migrate:fresh --seed
+php artisan storage:link
+php artisan jwt:secret
 ```
 
 #### Vue.jsのセットアップ
@@ -62,7 +64,7 @@ git clone https://github.com/saijiki/saijiki.git && cd saijiki/laradock
 #### Laradockのセットアップ
 
 ```sh
-cp env-example .env && docker-compose up -d nginx mysql
+cp env-example .env && docker-compose up -d
 ```
 
 ##### ポートフォワーディング
@@ -82,6 +84,8 @@ composer run-script post-root-package-install
 composer run-script post-create-project-cmd
 
 php artisan migrate:fresh --seed
+php artisan storage:link
+php artisan jwt:secret
 ```
 
 #### Vue.jsのセットアップ

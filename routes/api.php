@@ -11,12 +11,16 @@
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::namespace('Auth')->prefix('auth')->name('auth.')->group(function () {
+    Route::post('login/guest', 'GuestLoginController')->name('login.guest');
+
+    Route::post('login', 'LoginController')->name('login');
+    Route::post('register', 'RegisterController')->name('register');
+    Route::post('logout', 'LogoutController')->name('logout');
+});
 
 Route::apiResource('senryus', 'SenryuController')->parameters([
-  'senryus' => 'senryu',
+    'senryus' => 'senryu',
 ]);
 Route::get('sns/login', 'SnsBaseController@getAuth');
 Route::get('sns/callback', 'SnsBaseController@authCallback');

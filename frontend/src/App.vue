@@ -100,7 +100,7 @@
                 icon
                 large
                 :ripple="false"
-                @click="signInTwitter"
+                :to="{ name: 'Login' }"
             >
                 <v-icon>
                     fas fa-sign-in-alt

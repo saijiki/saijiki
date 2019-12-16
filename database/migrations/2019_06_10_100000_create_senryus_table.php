@@ -15,12 +15,17 @@ class CreateSenryusTable extends Migration
     {
         Schema::create('senryus', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
             $table->string('body', 32);
-            $table->unsignedInteger('good')->default(0);
-            $table->string('path');
-            $table->boolean('is_public')->default(true);
+            $table->string('uploaded_image_url')->nullable();
+            $table->string('generated_image_url');
+            $table->unsignedBigInteger('goods');
+            $table->boolean('is_public');
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 
