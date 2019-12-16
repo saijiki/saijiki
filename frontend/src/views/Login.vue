@@ -39,6 +39,15 @@
                                 ログイン
                             </v-btn>
                         </v-card-actions>
+                        <v-card-actions class="pr-4 pb-4">
+                            <v-spacer />
+                            <v-btn
+                                color="primary"
+                                @click="signInTwitter"
+                            >
+                                twitterログイン
+                            </v-btn>
+                        </v-card-actions>
                     </v-card>
                 </form>
             </v-col>
@@ -75,6 +84,24 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+        //twitterログイン処理,返ってきた後urlのトークンをバックに渡す
+        async signInTwitter(){
+          try {
+            const { data } = await this.$axios.get('/api/sns/login');
+            location.href = data;
+          } catch (e) {
+            console.log(e);
+          }
+          //コールバックしてから
+          try {
+            if(Object.keys(this.$route.query).length){
+              const { data } = await this.$axios.post('/api/senryus', {
+                  token: this.$route.query.oauth_token,
+                  verifier:this.$route.query.oauth_verifier
+              });
+            }
+          } catch (e) {}
         },
     },
 };
