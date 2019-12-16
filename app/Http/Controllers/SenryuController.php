@@ -83,7 +83,7 @@ class SenryuController extends Controller
 
             return response()->json(Senryu::generate($keyword));
         } else {
-            return response()->json(Senryu::generate($request->all()));
+            return response()->json(Senryu::generate($request->get('keyword')));
         }
     }
 

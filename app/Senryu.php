@@ -80,16 +80,20 @@ class Senryu extends Model
     /**
      * 川柳を生成する。
      *
-     * @param array $keywords
+     * @param string $keywords
      * @return self
      */
-    public static function generate(array $keywords)
+    public static function generate(string $keyword)
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
         for ($i = 0, $j = 1; $i < 3; $i++, $j++) {
             try {
-                list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence([5, 7, 5][$i], $morphemes, ${"keywords_{$i}"} ?? $keywords);
+                list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence(
+                    [5, 7, 5][$i],
+                    $morphemes,
+                    ${"keywords_{$i}"} ?? [$keyword]
+                );
             } catch (\Exception $e) {
                 if ($i < 1) {
                     throw $e;
@@ -100,7 +104,7 @@ class Senryu extends Model
             }
         }
 
-        $filename = self::generateImage($sentence_1, $sentence_2, $sentence_3);
+        $filename = self::generateImage($keyword, $sentence_1, $sentence_2, $sentence_3);
 
         return self::create([
             'user_id' => \Auth::id(),
@@ -235,14 +239,15 @@ class Senryu extends Model
     /**
      * 指定された川柳の画像を生成する。
      *
+     * @param string $keyword
      * @param string $sentence_1 初句
      * @param string $sentence_2 二句
      * @param string $sentence_3 結句
      * @return string
      */
-    private static function generateImage(string $sentence_1, string $sentence_2, string $sentence_3)
+    private static function generateImage(string $keyword,string $sentence_1, string $sentence_2, string $sentence_3)
     {
-        $process = new Process(['python3', 'saijiki_img.py', $sentence_1, $sentence_2, $sentence_3]);
+        $process = new Process(['python3', 'saijiki_img.py', $keyword, $sentence_1, $sentence_2, $sentence_3]);
         $process->setWorkingDirectory(storage_path('app/python'));
         $process->run();
 
