@@ -45,6 +45,15 @@ export default new Router({
             component: () => import('@/views/UserEdit'),
         },
         {
+            path: '/usersenryu',
+            name: 'UserSenryu',
+            component: () => import('@/views/UserSenryu'),
+            props: ({ query: { page, type } }) => ({
+                page: page > 1 ? page | 0 : 1,
+                type,
+            }),
+        },
+        {
             path: '*',
             component: () => import('@/views/NotFound'),
         },

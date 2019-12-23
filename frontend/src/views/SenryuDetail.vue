@@ -87,9 +87,10 @@
                 <template #back>
                     <v-card
                         color="white"
-                        height="600"
+                        height="0"
                         :img="require('@/assets/logo.png')"
                         raised
+                        :style="{ paddingTop: '111.111111111%' }"
                         tag="a"
                         width="540"
                     />

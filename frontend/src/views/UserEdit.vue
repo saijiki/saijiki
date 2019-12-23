@@ -68,7 +68,8 @@
                                 <v-card-text class="pt-5">
                                   <v-text-field
                                   label="name"
-                                  solo
+                                  outlined
+                                  single-line
                                   ></v-text-field>
                                 </v-card-text>
 
@@ -114,7 +115,8 @@
                               <v-card-text class="pt-5">
                                 <v-text-field
                                 label="mail"
-                                solo
+                                outlined
+                                single-line
                                 ></v-text-field>
                               </v-card-text>
 
@@ -161,12 +163,14 @@
                               <v-card-text class="pt-5">
                                 <v-text-field
                                 label="旧パスワード"
-                                solo
+                                outlined
+                                single-line
                                 ></v-text-field>
 
                                 <v-text-field
                                 label="新しいパスワード"
-                                solo
+                                outlined
+                                single-line
                                 counter
                                 ></v-text-field>
 
