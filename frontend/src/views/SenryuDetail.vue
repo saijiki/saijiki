@@ -88,7 +88,7 @@
                     <v-card
                         color="white"
                         height="600"
-                        :img="require('@/assets/logo.png')"
+                        :img="senryu.uploaded_image_url"
                         raised
                         tag="a"
                         width="540"
