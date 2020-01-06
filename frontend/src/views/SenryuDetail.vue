@@ -57,13 +57,16 @@
                                     icon
                                     large
                                     :ripple="false"
-                                    @click.stop="senryu.goods++"
+                                    @click.stop="likesToSenryu"
                                 >
                                     <v-badge color="deep-orange">
                                         <template #badge>
-                                            {{ senryu.goods }}
+                                            {{ countLikes }}
                                         </template>
-                                        <v-icon>
+                                        <v-icon v-if="isLiked">
+                                            fas fa-thumbs-up
+                                        </v-icon>
+                                        <v-icon v-else>
                                             far fa-thumbs-up
                                         </v-icon>
                                     </v-badge>
@@ -163,11 +166,20 @@ export default {
     props: {
         id: { type: Number },
     },
+    computed: {
+        countLikes: function () {
+            return this.senryu.goods;
+        },
+        isLiked: function () {
+            return this.isLiked;
+        }
+    },
     data: () => ({
         isCopySnackbarVisible: false,
         isFlipped: false,
         isLoading: false,
         isShareDialogVisible: false,
+        isLiked: false,
         senryu: {},
     }),
     created() {
@@ -187,6 +199,17 @@ export default {
                 alert('川柳の取得に失敗しました。');
             } finally {
                 this.isLoading = false;
+            }
+        },
+        async likesToSenryu() {
+            try {
+                const {data} = await this.$axios.put(`/api/senryus/${this.id}`, {
+                    goods: this.senryu.goods + 1,
+                });
+                this.isLiked = true;
+                this.senryu = data;
+            } catch (e) {
+                alert('いいねに失敗しました。');
             }
         },
         shareOnLine() {

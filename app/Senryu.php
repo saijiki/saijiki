@@ -174,6 +174,25 @@ class Senryu extends Model
     }
 
     /**
+     * 川柳をいいねする。
+     *
+     * @param \App\Senryu $senryu
+     * @param string $goods
+     * @return self
+     */
+    public static function updateGoods(Senryu $senryu, string $goods)
+    {
+        $check = $senryu->goods + 1;
+
+        if ($goods == $check) {
+            $senryu->goods = $goods;
+            $senryu->save();
+        }
+
+        return $senryu;
+    }
+
+    /**
      * 指定された文字数の句を生成する。
      *
      * @param int $chars

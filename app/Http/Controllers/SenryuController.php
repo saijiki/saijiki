@@ -107,7 +107,7 @@ class SenryuController extends Controller
      */
     public function update(Request $request, Senryu $senryu)
     {
-        return response()->json($senryu);
+        return response()->json(Senryu::updateGoods($senryu, $request->goods));
     }
 
     /**
