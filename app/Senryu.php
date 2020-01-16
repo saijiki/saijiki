@@ -89,9 +89,10 @@ class Senryu extends Model
      * 川柳を生成する。
      *
      * @param string $keywords
+     * @param string $uploaded_image_url
      * @return self
      */
-    public static function generate(string $keyword)
+    public static function generate(string $keyword, string $uploaded_image_url = null)
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
@@ -117,7 +118,7 @@ class Senryu extends Model
         return self::create([
             'user_id' => \Auth::id(),
             'body' => "{$sentence_1} {$sentence_2} {$sentence_3}",
-            'uploaded_image_url' => null,
+            'uploaded_image_url' => $uploaded_image_url,
             'generated_image_url' => asset("storage/generated/{$filename}"),
             'is_public' => true,
         ]);
@@ -127,7 +128,7 @@ class Senryu extends Model
      * 画像からキーワードを生成する。
      *
      * @param string $photo
-     * @return string
+     * @return array
      */
     public static function imageAnalysis($photo)
     {
@@ -150,7 +151,8 @@ class Senryu extends Model
 
         //　ファイル名取得
         $timestamp = \Date::now()->format("YmdHisv");
-        \Storage::put('public/uploaded/' . $timestamp . '.png', $photo);
+        $filename = "{$timestamp}.png";
+        \Storage::put("public/uploaded/{$filename}", $photo);
 
         $rekognition = new RekognitionClient($options);
 
@@ -178,7 +180,7 @@ class Senryu extends Model
         //　翻訳
         $keyword = self::keywordTranslate($keyword, $options);
 
-        return $keyword;
+        return [$keyword, $filename];
     }
 
     /**
