@@ -42,6 +42,14 @@ class Senryu extends Model
     ];
 
     /**
+     * The users that belong to the senryu.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    /**
      * @return string
      */
     public function getDiffFromCreatedAtToNowAttribute()
