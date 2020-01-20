@@ -27,7 +27,9 @@
                 <v-btn v-if="imageFileUrl === null" block tile outlined @click.stop="pickFile" color="success" height="120">
                   アップロード
                 </v-btn>
-                <img v-else :src="imageFileUrl">
+                <div v-else>
+                  <img :src="imageFileUrl">
+                </div>
                 <input
                     class="d-none"
                     accept=".jpg,.jpeg,.png"

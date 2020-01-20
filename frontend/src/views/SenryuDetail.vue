@@ -88,7 +88,7 @@
                     <v-card
                         color="white"
                         height="0"
-                        :img="require('@/assets/logo.png')"
+                        :img ="require('@/assets/sakura.png')"
                         raised
                         :style="{ paddingTop: '111.111111111%' }"
                         tag="a"

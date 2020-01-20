@@ -95,7 +95,7 @@
                 </v-card>
             </v-dialog>
             <v-spacer />
-            <v-menu v-if="!user" offset-y>
+            <v-menu v-if="user" offset-y>
               <template v-slot:activator="{ on }">
                 <v-btn v-on="on">
                   <img src="@/assets/logo.png" width="32">
