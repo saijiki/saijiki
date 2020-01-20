@@ -31,6 +31,8 @@
             <v-card>
                 <v-card-title class="headline">
                     アップロード
+                    <v-spacer />
+                    <v-switch class="pt-0 mt-0" hide-details label="公開" v-model="isPublic" />
                 </v-card-title>
                 <v-card-text class="pb-0">
                     <v-row justify="center">
@@ -72,6 +74,7 @@ export default {
         imageFileUrl: null,
         isLoading: false,
         isUploadDialogVisible: false,
+        isPublic: false,
         keyword: '',
     }),
     methods: {
@@ -128,6 +131,7 @@ export default {
             try {
                 const { data } = await this.$axios.post('/api/senryus', {
                     image_file_url: this.imageFileUrl,
+                    is_public: this.isPublic,
                 });
 
                 this.$router.push({
