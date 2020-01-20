@@ -87,9 +87,10 @@
                 <template #back>
                     <v-card
                         color="white"
-                        height="600"
+                        height="0"
                         :img="senryu.uploaded_image_url"
                         raised
+                        :style="{ paddingTop: '111.111111111%', backgroundSize: 'contain' }"
                         tag="a"
                         width="540"
                     />

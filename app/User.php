@@ -31,6 +31,14 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     /**
+     * The senryus that belong to the user.
+     */
+    public function senryus()
+    {
+        return $this->belongsToMany(Senryu::class);
+    }
+
+    /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
      * @return mixed
