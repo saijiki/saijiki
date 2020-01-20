@@ -28,7 +28,12 @@
                   アップロード
                 </v-btn>
                 <div v-else>
-                  <img :src="imageFileUrl">
+                  <vue-cropper
+                    ref="cropper"
+                    :src="imgSrc"
+                    alt="Source Image"
+                  />
+                  <v-btn @click="cropImage">crop</v-btn>
                 </div>
                 <input
                     class="d-none"
@@ -85,7 +90,7 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="green darken-1" text @click="onSubmitFile">
+              <v-btn color="green darken-1" text @click="() => {}">
                 名前を変更
               </v-btn>
               <v-btn
@@ -132,7 +137,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="onSubmitFile">
+          <v-btn color="green darken-1" text @click="() => {}">
             メールアドレスを更新
           </v-btn>
           <v-btn
@@ -188,7 +193,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="onSubmitFile">
+          <v-btn color="green darken-1" text @click="() => {}">
             メールアドレスを更新
           </v-btn>
           <v-btn
@@ -209,7 +214,11 @@
 </template>
 
 <script>
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
+
 export default {
+  components: { VueCropper },
   data: () => ({
      isEditNameDialog: false,
      isEditMailDialog: false,
@@ -217,6 +226,9 @@ export default {
      isEditPicDialog: false,
      imageFileObj: null,
      imageFileUrl: null,
+     imgSrc: null,
+     cropImg: '',
+     data: null,
   }),
 
   methods: {
@@ -235,9 +247,14 @@ export default {
 
       reader.addEventListener('load', () => {
         this.imageFileUrl = reader.result;
+        this.imgSrc = reader.result;
         this.isUploadDialogVisible = true;
       });
       reader.readAsDataURL(this.imageFileObj);
+    },
+    cropImage() {
+      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL()
+      console.log(this.cropImg)
     },
   },
 };
