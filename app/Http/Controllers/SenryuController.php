@@ -37,7 +37,7 @@ class SenryuController extends Controller
         // 順序
         if($request->has('order')) {
             if($param['order'] == "人気順") {
-                $builder->orderByDesc('good');
+                $builder->withCount('users')->orderByDesc('users_count');
             }
         }
 
