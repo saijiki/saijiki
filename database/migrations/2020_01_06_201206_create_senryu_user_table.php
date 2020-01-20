@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSenryusTable extends Migration
+class CreateSenryuUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateSenryusTable extends Migration
      */
     public function up()
     {
-        Schema::create('senryus', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('senryu_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('senryu_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('body', 32);
-            $table->string('uploaded_image_url')->nullable();
-            $table->string('generated_image_url');
-            $table->boolean('is_public');
-            $table->timestamps();
+
+            $table->foreign('senryu_id')->references('id')->on('senryus')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
 
             $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('cascade')
@@ -35,6 +34,6 @@ class CreateSenryusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('senryus');
+        Schema::dropIfExists('senryu_user');
     }
 }
