@@ -32,7 +32,7 @@
                 <v-card-title class="headline">
                     アップロード
                     <v-spacer />
-                    <v-switch class="pt-0 mt-0" hide-details label="公開" v-model="isPublic" />
+                    <v-switch v-model="isPublic" class="pt-0 mt-0" hide-details label="画像の公開"/>
                 </v-card-title>
                 <v-card-text class="pb-0">
                     <v-row justify="center">
@@ -74,7 +74,7 @@ export default {
         imageFileUrl: null,
         isLoading: false,
         isUploadDialogVisible: false,
-        isPublic: false,
+        isPublic: true,
         keyword: '',
     }),
     methods: {
@@ -123,6 +123,10 @@ export default {
         },
         async onSubmitFile() {
             if (this.isLoading || this.imageFileUrl === null) {
+                return;
+            }
+
+            if (this.isPublic && !confirm('アップロードされた画像が公開されますが、よろしいでしょうか？')) {
                 return;
             }
 
