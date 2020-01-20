@@ -41,6 +41,23 @@ class Senryu extends Model
     }
 
     /**
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUploadedImageUrlAttribute(string $value)
+    {
+        if ($this->is_public) {
+            return $value;
+        }
+
+        if ($this->user_id === \Auth::id()) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
      * @return int
      */
     public function getGoodsAttribute()
@@ -97,9 +114,10 @@ class Senryu extends Model
      *
      * @param string $keywords
      * @param string $uploaded_image_url
+     * @param bool   $is_public
      * @return self
      */
-    public static function generate(string $keyword, string $uploaded_image_url = null)
+    public static function generate(string $keyword, string $uploaded_image_url = null, bool $is_public = true)
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
@@ -127,7 +145,7 @@ class Senryu extends Model
             'body' => "{$sentence_1} {$sentence_2} {$sentence_3}",
             'uploaded_image_url' => $uploaded_image_url,
             'generated_image_url' => asset("storage/generated/{$filename}"),
-            'is_public' => true,
+            'is_public' => $is_public,
         ]);
     }
 

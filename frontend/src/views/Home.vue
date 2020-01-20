@@ -31,6 +31,8 @@
             <v-card>
                 <v-card-title class="headline">
                     アップロード
+                    <v-spacer />
+                    <v-switch v-model="isPublic" class="pt-0 mt-0" hide-details label="画像の公開"/>
                 </v-card-title>
                 <v-card-text class="pb-0">
                     <v-row justify="center">
@@ -72,6 +74,7 @@ export default {
         imageFileUrl: null,
         isLoading: false,
         isUploadDialogVisible: false,
+        isPublic: true,
         keyword: '',
     }),
     methods: {
@@ -123,11 +126,16 @@ export default {
                 return;
             }
 
+            if (this.isPublic && !confirm('アップロードされた画像が公開されますが、よろしいでしょうか？')) {
+                return;
+            }
+
             this.isLoading = true;
 
             try {
                 const { data } = await this.$axios.post('/api/senryus', {
                     image_file_url: this.imageFileUrl,
+                    is_public: this.isPublic,
                 });
 
                 this.$router.push({

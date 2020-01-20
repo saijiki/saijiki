@@ -80,7 +80,7 @@ class SenryuController extends Controller
         if ($request->has('image_file_url')) {
             [$keyword, $filename] = Senryu::imageAnalysis($request->get('image_file_url'));
 
-            return response()->json(Senryu::generate($keyword, asset("storage/uploaded/{$filename}")));
+            return response()->json(Senryu::generate($keyword, asset("storage/uploaded/{$filename}"), $request->get('is_public')));
         } else {
             return response()->json(Senryu::generate($request->get('keyword')));
         }
