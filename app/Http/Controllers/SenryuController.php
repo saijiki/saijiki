@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Senryu;
 
@@ -79,9 +78,9 @@ class SenryuController extends Controller
     public function store(Request $request)
     {
         if ($request->has('image_file_url')) {
-            $keyword = Senryu::imageAnalysis($request->get('image_file_url'));
+            [$keyword, $filename] = Senryu::imageAnalysis($request->get('image_file_url'));
 
-            return response()->json(Senryu::generate($keyword));
+            return response()->json(Senryu::generate($keyword, asset("storage/uploaded/{$filename}")));
         } else {
             return response()->json(Senryu::generate($request->get('keyword')));
         }

@@ -19,6 +19,12 @@ Route::namespace('Auth')->prefix('auth')->name('auth.')->group(function () {
     Route::post('logout', 'LogoutController')->name('logout');
 });
 
+Route::match(['put', 'patch'], 'users', 'UserController@update')->name('users.update');
+
+Route::apiResource('users.senryus', 'UserSenryuController')->only('index')->parameters([
+    'senryus' => 'senryu',
+]);
+
 Route::apiResource('senryus', 'SenryuController')->parameters([
     'senryus' => 'senryu',
 ]);
