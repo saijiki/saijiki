@@ -41,20 +41,12 @@ class Senryu extends Model
     }
 
     /**
-     * @param  string  $value
+     * @param  string|null  $value
      * @return string|null
      */
-    public function getUploadedImageUrlAttribute(string $value)
+    public function getUploadedImageUrlAttribute(?string $value)
     {
-        if ($this->is_public) {
-            return $value;
-        }
-
-        if ($this->user_id === \Auth::id()) {
-            return $value;
-        }
-
-        return null;
+        return ($this->is_public ? $value : null);
     }
 
     /**
