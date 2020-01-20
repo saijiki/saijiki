@@ -62,7 +62,7 @@
                                 >
                                     <v-badge color="deep-orange">
                                         <template #badge>
-                                            {{ countLikes }}
+                                            {{ senryu.goods }}
                                         </template>
                                         <v-icon>
                                             {{ senryu.is_liked ? 'fas' : 'far' }} fa-thumbs-up
@@ -165,21 +165,12 @@ export default {
     props: {
         id: { type: Number },
     },
-    computed: {
-        countLikes: function () {
-            return this.senryu.goods;
-        },
-        isLiked: function () {
-            return this.isLiked;
-        }
-    },
     data: () => ({
         isCopySnackbarVisible: false,
         isFlipped: false,
         isLikeLoading: false,
         isLoading: false,
         isShareDialogVisible: false,
-        isLiked: false,
         senryu: {},
     }),
     created() {
@@ -219,7 +210,7 @@ export default {
 
                 this.senryu = data;
             } catch (e) {
-                alert('川柳のいいねに取得に失敗しました。');
+                alert('川柳のいいねに失敗しました。');
             } finally {
                 this.isLikeLoading = false;
             }
