@@ -97,9 +97,16 @@
             <v-spacer />
             <v-menu v-if="$store.getters.isLoggedIn" offset-y>
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on">
-                  <img src="@/assets/logo.png" width="32">
-                </v-btn>
+                  <v-btn
+                      class="ma-2 blue"
+                      icon
+                      large
+                      :loading="isLoading"
+                      :ripple="false"
+                      v-on="on"
+                  >
+                      <img :src="$store.state.data.user.avatar || require('@/assets/avatar.png')" width="28">
+                  </v-btn>
 
 
               </template>
@@ -109,22 +116,19 @@
                   :to="{ name: 'UserSenryu' }"
                 >
                 <v-list-item-title>
-                  アカウント名
+                    {{ $store.state.data.user.name }}
                 </v-list-item-title>
               </v-list-item>
-                <v-list-item
-                @click=""
-                :to="{ name: 'UserEdit' }"
-                >
+                <v-list-item :to="{ name: 'UserEdit' }">
                     <v-list-item-title>
                       設定
                     </v-list-item-title>
                 </v-list-item>
-                  <v-list-item @click="$store.dispatch('logout')">
-                  <v-list-item-title>
-                    ログアウト
-                  </v-list-item-title>
-                </v-list-item>
+                  <v-list-item @click="logout">
+                      <v-list-item-title>
+                          ログアウト
+                      </v-list-item-title>
+                  </v-list-item>
                 </v-list>
               </v-menu>
 
@@ -151,7 +155,31 @@
 
 <script>
 export default {
-    data: () => ({ isHelpDialogVisible: false }),
+    data: () => ({
+        isHelpDialogVisible: false,
+        isLoading: false,
+    }),
+    methods: {
+        async logout() {
+            this.isLoading = true;
+
+            try {
+                await this.$store.dispatch('logout');
+
+                if (this.$store.getters.isLoggedIn) {
+                    alert('ログアウトに失敗しました。');
+                    return;
+                }
+
+                this.$router.push({name: 'Home'});
+            } catch (e) {
+                this.$router.push({name: 'Home'});
+            } finally {
+                alert('ログアウトしました。');
+                this.isLoading = false;
+            }
+        },
+    },
 };
 </script>
 
