@@ -56,18 +56,16 @@
                                     color="deep-orange"
                                     icon
                                     large
+                                    :loading="isLikeLoading"
                                     :ripple="false"
-                                    @click.stop="likesToSenryu"
+                                    @click.stop="likeSenryu"
                                 >
                                     <v-badge color="deep-orange">
                                         <template #badge>
                                             {{ countLikes }}
                                         </template>
-                                        <v-icon v-if="isLiked">
-                                            fas fa-thumbs-up
-                                        </v-icon>
-                                        <v-icon v-else>
-                                            far fa-thumbs-up
+                                        <v-icon>
+                                            {{ senryu.is_liked ? 'fas' : 'far' }} fa-thumbs-up
                                         </v-icon>
                                     </v-badge>
                                 </v-btn>
@@ -178,6 +176,7 @@ export default {
     data: () => ({
         isCopySnackbarVisible: false,
         isFlipped: false,
+        isLikeLoading: false,
         isLoading: false,
         isShareDialogVisible: false,
         isLiked: false,
@@ -202,15 +201,27 @@ export default {
                 this.isLoading = false;
             }
         },
-        async likesToSenryu() {
+        async likeSenryu() {
+            this.isLikeLoading = true;
+
+            if (this.senryu.is_liked) {
+                this.senryu.is_liked = !this.senryu.is_liked;
+                this.senryu.goods--;
+            } else {
+                this.senryu.is_liked = !this.senryu.is_liked;
+                this.senryu.goods++;
+            }
+
             try {
-                const {data} = await this.$axios.put(`/api/senryus/${this.id}`, {
-                    goods: this.senryu.goods + 1,
-                });
-                this.isLiked = true;
+                const {data} = await this.$axios.put(
+                    `/api/senryus/${this.id}`
+                );
+
                 this.senryu = data;
             } catch (e) {
-                alert('いいねに失敗しました。');
+                alert('川柳のいいねに取得に失敗しました。');
+            } finally {
+                this.isLikeLoading = false;
             }
         },
         shareOnLine() {

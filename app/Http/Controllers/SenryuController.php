@@ -94,7 +94,7 @@ class SenryuController extends Controller
      */
     public function show(Senryu $senryu)
     {
-        return response()->json($senryu);
+        return response()->json($senryu->append('goods', 'is_liked'));
     }
 
     /**
@@ -106,7 +106,13 @@ class SenryuController extends Controller
      */
     public function update(Request $request, Senryu $senryu)
     {
-        return response()->json(Senryu::updateGoods($senryu, $request->goods));
+        if ($senryu->is_liked) {
+            $senryu->users()->detach(\Auth::id());
+        } else {
+            $senryu->users()->attach(\Auth::id());
+        }
+
+        return response()->json($senryu->append('goods', 'is_liked'));
     }
 
     /**

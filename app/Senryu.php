@@ -23,15 +23,6 @@ class Senryu extends Model
     ];
 
     /**
-     * The model's default values for attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'goods' => 0,
-    ];
-
-    /**
      * The accessors to append to the model's array form.
      *
      * @var array
@@ -47,6 +38,22 @@ class Senryu extends Model
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * @return int
+     */
+    public function getGoodsAttribute()
+    {
+        return $this->users()->count();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsLikedAttribute()
+    {
+        return $this->users()->whereKey(\Auth::id())->exists();
     }
 
     /**
@@ -181,25 +188,6 @@ class Senryu extends Model
         $keyword = self::keywordTranslate($keyword, $options);
 
         return [$keyword, $filename];
-    }
-
-    /**
-     * 川柳をいいねする。
-     *
-     * @param \App\Senryu $senryu
-     * @param string $goods
-     * @return self
-     */
-    public static function updateGoods(Senryu $senryu, string $goods)
-    {
-        $check = $senryu->goods + 1;
-
-        if ($goods == $check) {
-            $senryu->goods = $goods;
-            $senryu->save();
-        }
-
-        return $senryu;
     }
 
     /**
