@@ -19,7 +19,6 @@ class CreateSenryusTable extends Migration
             $table->string('body', 32);
             $table->string('uploaded_image_url')->nullable();
             $table->string('generated_image_url');
-            $table->unsignedBigInteger('goods');
             $table->boolean('is_public');
             $table->timestamps();
 
