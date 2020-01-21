@@ -106,7 +106,11 @@
                         :ripple="false"
                         v-on="on"
                     >
-                        <img :src="$store.state.data.user.avatar || require('@/assets/avatar.png')" width="28">
+                        <img
+                            :height="$store.state.data.user.avatar ? 44 : 28"
+                            :src="$store.state.data.user.avatar || require('@/assets/avatar.png')"
+                            :width="$store.state.data.user.avatar ? 44 : 28"
+                        >
                     </v-btn>
                 </template>
                 <v-list>
