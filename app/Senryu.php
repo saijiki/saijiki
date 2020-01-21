@@ -33,6 +33,14 @@ class Senryu extends Model
     ];
 
     /**
+     * Get the user that owns the senryu.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * The users that belong to the senryu.
      */
     public function users()

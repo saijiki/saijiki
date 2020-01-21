@@ -95,42 +95,53 @@
                 </v-card>
             </v-dialog>
             <v-spacer />
-            <v-menu v-if="$store.getters.isLoggedIn" offset-y>
-              <template v-slot:activator="{ on }">
-                  <v-btn
-                      class="ma-2 blue"
-                      icon
-                      large
-                      :loading="isLoading"
-                      :ripple="false"
-                      v-on="on"
-                  >
-                      <img :src="$store.state.data.user.avatar || require('@/assets/avatar.png')" width="28">
-                  </v-btn>
 
-
-              </template>
-              <v-list>
-                <v-list-item
-                  @click=""
-                  :to="{ name: 'UserSenryu' }"
-                >
-                <v-list-item-title>
-                    {{ $store.state.data.user.name }}
-                </v-list-item-title>
-              </v-list-item>
-                <v-list-item :to="{ name: 'UserEdit' }">
-                    <v-list-item-title>
-                      設定
-                    </v-list-item-title>
-                </v-list-item>
-                  <v-list-item @click="logout">
-                      <v-list-item-title>
-                          ログアウト
-                      </v-list-item-title>
-                  </v-list-item>
+            <v-menu v-if="$store.getters.isLoggedIn" bottom nudge-top="-6" offset-y transition="slide-y-transition">
+                <template #activator="{ on }">
+                    <v-btn
+                        class="ma-2 blue"
+                        icon
+                        large
+                        :loading="isLoading"
+                        :ripple="false"
+                        v-on="on"
+                    >
+                        <img :src="$store.state.data.user.avatar || require('@/assets/avatar.png')" width="28">
+                    </v-btn>
+                </template>
+                <v-list>
+                    <v-list-item exact :to="{ name: 'MySenryus' }">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fas fa-user
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>
+                            {{ $store.state.data.user.name }}
+                        </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item exact :to="{ name: 'MyProfile' }">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fas fa-cog
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>
+                            設定
+                        </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="logout">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fas fa-sign-out-alt
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>
+                            ログアウト
+                        </v-list-item-title>
+                    </v-list-item>
                 </v-list>
-              </v-menu>
+            </v-menu>
 
             <v-btn
                 v-else
