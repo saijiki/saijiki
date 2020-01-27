@@ -198,6 +198,55 @@
 
 <script>
 export default {
-    data: () => ({ isEditNameDialog: false, isEditMailDialog: false, isEditPasswordDialog: false ,isEditPicDialog: false}),
+  components: { VueCropper },
+  data: () => ({
+     isEditNameDialog: false,
+     isEditMailDialog: false,
+     isEditPasswordDialog: false,
+     isEditPicDialog: false,
+     imageFileObj: null,
+     imageFileUrl: null,
+     imgSrc: null,
+     cropImg: '',
+     data: null,
+  }),
+
+  methods: {
+    pickFile() {
+      document.querySelector('[type="file"]').click();
+    },
+    onPickFile({ target }) {
+      if (target.files.length === 0) {
+        return;
+      }
+
+      this.imageFileObj = target.files[0];
+      target.value = '';
+
+      const reader = new FileReader();
+
+      reader.addEventListener('load', () => {
+        this.imageFileUrl = reader.result;
+        this.imgSrc = reader.result;
+        this.isUploadDialogVisible = true;
+      });
+      reader.readAsDataURL(this.imageFileObj);
+    },
+    cropImage() {
+      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL()
+      try {
+        const { data } = await this.$axios.post('users.update'{
+            imagefileurl = this.cropImg,
+        })
+        this.$router.push({
+          path : this.cropImg
+        })
+      } catch (e) {
+        alert('プロフィール写真の更新に失敗しました')
+      } finally {
+        this.isUploadDialogVisible = false
+      }
+    },
+  },
 };
 </script>
