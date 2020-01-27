@@ -56,15 +56,16 @@
                                     color="deep-orange"
                                     icon
                                     large
+                                    :loading="isLikeLoading"
                                     :ripple="false"
-                                    @click.stop="senryu.goods++"
+                                    @click.stop="likeSenryu"
                                 >
                                     <v-badge color="deep-orange">
                                         <template #badge>
-                                            {{ senryu.goods }}
+                                            {{ countLikes }}
                                         </template>
                                         <v-icon>
-                                            far fa-thumbs-up
+                                            {{ senryu.is_liked ? 'fas' : 'far' }} fa-thumbs-up
                                         </v-icon>
                                     </v-badge>
                                 </v-btn>
@@ -88,9 +89,15 @@
                     <v-card
                         color="white"
                         height="0"
+<<<<<<< HEAD
                         :img ="require('@/assets/sakura.png')"
                         raised
                         :style="{ paddingTop: '111.111111111%' }"
+=======
+                        :img="senryu.uploaded_image_url"
+                        raised
+                        :style="{ paddingTop: '111.111111111%', backgroundSize: 'contain' }"
+>>>>>>> origin
                         tag="a"
                         width="540"
                     />
@@ -164,11 +171,21 @@ export default {
     props: {
         id: { type: Number },
     },
+    computed: {
+        countLikes: function () {
+            return this.senryu.goods;
+        },
+        isLiked: function () {
+            return this.isLiked;
+        }
+    },
     data: () => ({
         isCopySnackbarVisible: false,
         isFlipped: false,
+        isLikeLoading: false,
         isLoading: false,
         isShareDialogVisible: false,
+        isLiked: false,
         senryu: {},
     }),
     created() {
@@ -188,6 +205,29 @@ export default {
                 alert('川柳の取得に失敗しました。');
             } finally {
                 this.isLoading = false;
+            }
+        },
+        async likeSenryu() {
+            this.isLikeLoading = true;
+
+            if (this.senryu.is_liked) {
+                this.senryu.is_liked = !this.senryu.is_liked;
+                this.senryu.goods--;
+            } else {
+                this.senryu.is_liked = !this.senryu.is_liked;
+                this.senryu.goods++;
+            }
+
+            try {
+                const {data} = await this.$axios.put(
+                    `/api/senryus/${this.id}`
+                );
+
+                this.senryu = data;
+            } catch (e) {
+                alert('川柳のいいねに取得に失敗しました。');
+            } finally {
+                this.isLikeLoading = false;
             }
         },
         shareOnLine() {
