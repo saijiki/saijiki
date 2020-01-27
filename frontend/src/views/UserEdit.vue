@@ -254,7 +254,19 @@ export default {
     },
     cropImage() {
       this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL()
-      console.log(this.cropImg)
+      try {
+        const { data } = await this.$axios.post({
+            imagefileurl = this.cropImg,
+        })
+        this.$router.push({
+          name: '',
+          params : ,
+        })
+      } catch (e) {
+        alert('プロフィール写真の更新に失敗しました')
+      } finally {
+        this.isUploadDialogVisible = false
+      }
     },
   },
 };
