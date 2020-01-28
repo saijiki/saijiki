@@ -9,44 +9,16 @@
                 >
                     <v-col cols="6">
                         <v-select
-                            v-model="currentPeriod"
+                            v-model="currentType"
                             class="mr-2"
                             hide-details
-                            :items="['今日', '今週', '今月', '全て']"
-                            label="日付"
-                            solo
-                            :style="{ maxWidth: '172px' }"
-                        />
-                    </v-col>
-                    <v-col cols="6">
-                        <v-select
-                            v-model="currentOrder"
-                            class="ml-2"
-                            hide-details
-                            :items="['新着順', '人気順']"
-                            label="順序"
+                            :items="['自分の句', 'いいねした句']"
+                            label="表示"
                             solo
                             :style="{ maxWidth: '172px' }"
                         />
                     </v-col>
                 </v-row>
-            </v-col>
-            <v-col cols="12" lg="4" md="6" offset-lg="4">
-                <v-text-field
-                    v-model="filter"
-                    class="mx-auto"
-                    hide-details
-                    label="ワード検索"
-                    solo
-                    :style="{ maxWidth: '360px' }"
-                    @keyup.enter="onSubmit"
-                >
-                    <template #append>
-                        <v-icon tag="a" @click.stop="onSubmit" @mousedown.stop>
-                            fas fa-search
-                        </v-icon>
-                    </template>
-                </v-text-field>
             </v-col>
         </v-row>
         <v-row>
@@ -92,13 +64,10 @@ export default {
     components: { SenryuCard },
     props: {
         page: { type: Number },
-        word: { type: String },
-        period: { type: String },
-        order: { type: String },
+        type: { type: String },
     },
     data: () => ({
         isLoading: false,
-        filter: '',
         length: 1,
         senryus: [
             { id: -1 },
@@ -121,47 +90,24 @@ export default {
                     this.$router.push({
                         query: {
                             page,
-                            word: this.word,
-                            period: this.period,
-                            order: this.order,
+                            type: this.type,
                         },
                     });
                 }
             },
         },
-        currentPeriod: {
+        currentType: {
             get() {
-                return this.period || '全て';
+                return this.type || '自分の句';
             },
-            set(period) {
-                if (period == this.$route.query.period) {
+            set(type) {
+                if (type == this.$route.query.type) {
                     this.getSenryus();
                 } else {
                     this.$router.push({
                         query: {
                             page: this.page,
-                            word: this.word,
-                            period,
-                            order: this.order,
-                        },
-                    });
-                }
-            },
-        },
-        currentOrder: {
-            get() {
-                return this.order || '新着順';
-            },
-            set(order) {
-                if (order == this.$route.query.order) {
-                    this.getSenryus();
-                } else {
-                    this.$router.push({
-                        query: {
-                            page: this.page,
-                            word: this.word,
-                            period: this.period,
-                            order,
+                            type,
                         },
                     });
                 }
@@ -181,14 +127,15 @@ export default {
             this.isLoading = true;
 
             try {
-                const { data } = await this.$axios.get('/api/senryus', {
-                    params: {
-                        page: this.page,
-                        word: this.word,
-                        period: this.period,
-                        order: this.order,
-                    },
-                });
+                const {data} = await this.$axios.get(
+                    `/api/users/${this.$store.state.data.user.id}/senryus`,
+                    {
+                        params: {
+                            page: this.page,
+                            type: this.type,
+                        },
+                    }
+                );
 
                 this.length = data.last_page;
                 this.senryus = data.data;
@@ -202,9 +149,7 @@ export default {
             this.$router.push({
                 query: {
                     page: this.page,
-                    word: this.filter,
-                    period: this.period,
-                    order: this.order,
+                    type: this.type,
                 },
             });
         },

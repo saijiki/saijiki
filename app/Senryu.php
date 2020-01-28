@@ -33,11 +33,28 @@ class Senryu extends Model
     ];
 
     /**
+     * Get the user that owns the senryu.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * The users that belong to the senryu.
      */
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * @param  string|null  $value
+     * @return string|null
+     */
+    public function getUploadedImageUrlAttribute(?string $value)
+    {
+        return ($this->is_public ? $value : null);
     }
 
     /**
@@ -97,9 +114,10 @@ class Senryu extends Model
      *
      * @param string $keywords
      * @param string $uploaded_image_url
+     * @param bool   $is_public
      * @return self
      */
-    public static function generate(string $keyword, string $uploaded_image_url = null)
+    public static function generate(string $keyword, string $uploaded_image_url = null, bool $is_public = true)
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
@@ -127,7 +145,7 @@ class Senryu extends Model
             'body' => "{$sentence_1} {$sentence_2} {$sentence_3}",
             'uploaded_image_url' => $uploaded_image_url,
             'generated_image_url' => asset("storage/generated/{$filename}"),
-            'is_public' => true,
+            'is_public' => $is_public,
         ]);
     }
 

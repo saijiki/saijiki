@@ -21,12 +21,19 @@
                                       primary-title
                                   >
                                       プロフィール写真を追加
-                                  </v-card-title>
-
+                                </vue-cropper>
                                   <v-card-text class="pt-5">
                                     <v-btn block tile outlined color="success" height="120">
                                        アップロード
                                     </v-btn>
+                                  </v-card-title>
+                                  <vue-cropper
+                                    ref="cropper"
+                                    :src="imgSrc"
+                                    alt="Source Image"
+                                    :cropmove="cropImage"
+                                  >
+
 
 
                                   </v-card-text>
@@ -197,6 +204,8 @@
 </template>
 
 <script>
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
 export default {
   components: { VueCropper },
   data: () => ({

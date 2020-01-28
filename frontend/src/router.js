@@ -40,14 +40,14 @@ export default new Router({
             component: () => import('@/views/Register'),
         },
         {
-            path: '/useredit',
-            name: 'UserEdit',
-            component: () => import('@/views/UserEdit'),
+            path: '/my/profile',
+            name: 'MyProfile',
+            component: () => import('@/views/MyProfile'),
         },
         {
-            path: '/usersenryu',
-            name: 'UserSenryu',
-            component: () => import('@/views/UserSenryu'),
+            path: '/my/senryus',
+            name: 'MySenryus',
+            component: () => import('@/views/MySenryus'),
             props: ({ query: { page, type } }) => ({
                 page: page > 1 ? page | 0 : 1,
                 type,
