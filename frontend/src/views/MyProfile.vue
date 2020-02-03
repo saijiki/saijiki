@@ -102,12 +102,13 @@
                             <vue-cropper
                                 v-if="imageFileUrl"
                                 ref="cropper"
+                                :aspectRatio="1"
                                 :center="false"
-                                :cropBoxResizable="false"
+                                dragMode="none"
                                 :guides="false"
                                 height="192"
-                                :minContainerHeight="100"
-                                :minContainerWidth="100"
+                                :minCropBoxHeight="100"
+                                :minCropBoxWidth="100"
                                 :src="imageFileUrl"
                                 :toggleDragModeOnDblclick="false"
                             />
