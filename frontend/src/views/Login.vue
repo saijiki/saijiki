@@ -32,20 +32,23 @@
                         <v-card-actions class="pr-4 pb-4">
                             <v-spacer />
                             <v-btn
+                                class="text-capitalize"
+                                color="info"
+                                :loading="isTwitterLoading"
+                                @click="onLoginTwitter"
+                            >
+                                <v-icon class="mr-1">
+                                    fab fa-twitter
+                                </v-icon>
+                                Twitterログイン
+                            </v-btn>
+                            <v-btn
+                                class="text-capitalize"
                                 color="primary"
                                 :loading="isLoading"
                                 type="submit"
                             >
                                 ログイン
-                            </v-btn>
-                        </v-card-actions>
-                        <v-card-actions class="pr-4 pb-4">
-                            <v-spacer />
-                            <v-btn
-                                color="primary"
-                                @click="signInTwitter"
-                            >
-                                twitterログイン
                             </v-btn>
                         </v-card-actions>
                     </v-card>
@@ -60,11 +63,17 @@ export default {
     data: () => ({
         email: '',
         isLoading: false,
+        isTwitterLoading: false,
         password: '',
     }),
+    created() {
+        if (this.$route.query.oauth_token && this.$route.query.oauth_verifier) {
+            this.loginTwitter(this.$route.query);
+        }
+    },
     methods: {
         async onSubmit() {
-            if (this.isLoading) {
+            if (this.isLoading || this.isTwitterLoading) {
                 return;
             }
 
@@ -85,23 +94,45 @@ export default {
                 this.isLoading = false;
             }
         },
-        //twitterログイン処理,返ってきた後urlのトークンをバックに渡す
-        async signInTwitter(){
-          try {
-            const { data } = await this.$axios.get('/api/sns/login');
-            location.href = data;
-          } catch (e) {
-            console.log(e);
-          }
-          //コールバックしてから
-          try {
-            if(Object.keys(this.$route.query).length){
-              const { data } = await this.$axios.post('/api/senryus', {
-                  token: this.$route.query.oauth_token,
-                  verifier:this.$route.query.oauth_verifier
-              });
+        async onLoginTwitter() {
+            if (this.isLoading || this.isTwitterLoading) {
+                return;
             }
-          } catch (e) {}
+
+            this.isTwitterLoading = true;
+
+            try {
+                const { data } = await this.$axios.get(
+                    '/api/auth/login/twitter'
+                );
+
+                location.href = data.url;
+            } catch (e) {
+                alert('ログインに失敗しました。');
+                this.isTwitterLoading = false;
+            }
+        },
+        async loginTwitter({ oauth_token, oauth_verifier }) {
+            if (this.isLoading || this.isTwitterLoading) {
+                return;
+            }
+
+            this.isTwitterLoading = true;
+
+            try {
+                await this.$store.dispatch('loginTwitter', {
+                    oauth_token,
+                    oauth_verifier,
+                });
+
+                this.$router.push({ name: 'Home' });
+
+                alert('ログインに成功しました。');
+            } catch (e) {
+                alert('ログインに失敗しました。');
+            } finally {
+                this.isTwitterLoading = false;
+            }
         },
     },
 };

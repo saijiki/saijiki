@@ -9,11 +9,10 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-        "abraham/twitteroauth": "^1.0",
         "aws/aws-sdk-php": "^3.123",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
-        "laravel/socialite": "^4.2",
+        "laravel/socialite": "^4.3",
         "laravel/tinker": "^1.0",
         "tymon/jwt-auth": "dev-develop"
     },
