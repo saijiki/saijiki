@@ -33,6 +33,14 @@ class Senryu extends Model
     ];
 
     /**
+     * Get the user that owns the senryu.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * The users that belong to the senryu.
      */
     public function users()
@@ -41,20 +49,12 @@ class Senryu extends Model
     }
 
     /**
-     * @param  string  $value
+     * @param  string|null  $value
      * @return string|null
      */
-    public function getUploadedImageUrlAttribute(string $value)
+    public function getUploadedImageUrlAttribute(?string $value)
     {
-        if ($this->is_public) {
-            return $value;
-        }
-
-        if ($this->user_id === \Auth::id()) {
-            return $value;
-        }
-
-        return null;
+        return ($this->is_public ? $value : null);
     }
 
     /**

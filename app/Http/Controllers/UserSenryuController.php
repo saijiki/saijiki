@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Senryu;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -26,6 +27,23 @@ class UserSenryuController extends Controller
      */
     public function index(Request $request, User $user)
     {
-        return response()->json($user->senryus);
+        $builder = Senryu::query()->select([
+            'id',
+            'generated_image_url',
+            'created_at',
+            'updated_at',
+        ]);
+
+        if ($request->type === 'いいねした句') {
+            $builder->whereHas('users', function ($query) use ($user) {
+                $query->whereKey($user);
+            });
+        } else {
+            $builder->whereHas('user', function ($query) use ($user) {
+                $query->whereKey($user);
+            });
+        }
+
+        return response()->json($builder->orderByDesc('created_at')->paginate(6));
     }
 }

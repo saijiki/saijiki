@@ -107,7 +107,60 @@
                 </v-card>
             </v-dialog>
             <v-spacer />
+
+            <v-menu v-if="$store.getters.isLoggedIn" bottom nudge-top="-6" offset-y transition="slide-y-transition">
+                <template #activator="{ on }">
+                    <v-btn
+                        class="ma-2 blue"
+                        icon
+                        large
+                        :loading="isLoading"
+                        :ripple="false"
+                        v-on="on"
+                    >
+                        <img
+                            :height="$store.state.data.user.avatar ? 44 : 28"
+                            :src="$store.state.data.user.avatar || require('@/assets/avatar.png')"
+                            :width="$store.state.data.user.avatar ? 44 : 28"
+                        >
+                    </v-btn>
+                </template>
+                <v-list>
+                    <v-list-item exact :to="{ name: 'MySenryus' }">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fas fa-user
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>
+                            {{ $store.state.data.user.name }}
+                        </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item exact :to="{ name: 'MyProfile' }">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fas fa-cog
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>
+                            設定
+                        </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="logout">
+                        <v-list-item-icon>
+                            <v-icon>
+                                fas fa-sign-out-alt
+                            </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>
+                            ログアウト
+                        </v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+
             <v-btn
+                v-else
                 class="ma-2 blue"
                 icon
                 large
@@ -129,7 +182,31 @@
 
 <script>
 export default {
-    data: () => ({ isHelpDialogVisible: false }),
+    data: () => ({
+        isHelpDialogVisible: false,
+        isLoading: false,
+    }),
+    methods: {
+        async logout() {
+            this.isLoading = true;
+
+            try {
+                await this.$store.dispatch('logout');
+
+                if (this.$store.getters.isLoggedIn) {
+                    alert('ログアウトに失敗しました。');
+                    return;
+                }
+
+                this.$router.push({name: 'Home'});
+            } catch (e) {
+                this.$router.push({name: 'Home'});
+            } finally {
+                alert('ログアウトしました。');
+                this.isLoading = false;
+            }
+        },
+    },
 };
 </script>
 
