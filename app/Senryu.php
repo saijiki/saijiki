@@ -112,12 +112,12 @@ class Senryu extends Model
     /**
      * 川柳を生成する。
      *
-     * @param string $keywords
+     * @param array  $keywords
      * @param string $uploaded_image_url
      * @param bool   $is_public
      * @return self
      */
-    public static function generate(string $keyword, string $uploaded_image_url = null, bool $is_public = true)
+    public static function generate(array $keywords, string $uploaded_image_url = null, bool $is_public = true)
     {
         $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
 
@@ -126,7 +126,7 @@ class Senryu extends Model
                 list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence(
                     [5, 7, 5][$i],
                     $morphemes,
-                    ${"keywords_{$i}"} ?? [$keyword]
+                    (${"keywords_{$i}"} ?? $keywords)
                 );
             } catch (\Exception $e) {
                 if ($i < 1) {
@@ -137,6 +137,10 @@ class Senryu extends Model
                 $j -= 2;
             }
         }
+
+        $keyword = collect($keywords)->first(function ($keyword) use ($sentence_1) {
+            return \Str::startsWith($sentence_1, $keyword);
+        });
 
         $filename = self::generateImage($keyword, $sentence_1, $sentence_2, $sentence_3);
 
@@ -157,8 +161,6 @@ class Senryu extends Model
      */
     public static function imageAnalysis($photo)
     {
-        $keyword = "";
-
         $options = [
             'region' => config('aws.default_region'),
             'version' => 'latest',
@@ -181,18 +183,8 @@ class Senryu extends Model
 
         $rekognition = new RekognitionClient($options);
 
-        // TODO:不適切コンテンツを検出するなら必要。
-        // AWS Rekognition => 画像規制ラベル検出
-//        $keyword1 = $rekognition->detectModerationLabels(array(
-//                'Image' => array(
-//                    'Bytes' => $photo,
-//                ),
-//                'Attributes' => array('Name')
-//            )
-//        );
-
         // AWS Rekognition => 画像ラベル検出
-        $keyword = $rekognition->detectLabels(array(
+        $keywords = $rekognition->detectLabels(array(
                 'Image' => array(
                     'Bytes' => $photo,
                 ),
@@ -200,12 +192,12 @@ class Senryu extends Model
             )
         );
         // Label →　Nameのみ配列に変換
-        $keyword = collect($keyword["Labels"])->pluck('Name');
+        $keywords = collect($keywords["Labels"])->pluck('Name');
 
         //　翻訳
-        $keyword = self::keywordTranslate($keyword, $options);
+        $keywords = self::keywordTranslate($keywords, $options);
 
-        return [$keyword, $filename];
+        return [$keywords, $filename];
     }
 
     /**
@@ -314,7 +306,7 @@ class Senryu extends Model
      *
      * @param \Illuminate\Support\Collection $keywords 検出ラベル
      * @param array $options AWS設定
-     * @return string
+     * @return array
      */
     private static function keywordTranslate(Collection $keywords, array $options)
     {
@@ -322,37 +314,36 @@ class Senryu extends Model
         $targetLanguage = 'ja';
 
         //　キーワードランダム抽出
-        $translate_word = $keywords->map(function ($keyword) {
+        $keywords = $keywords->map(function ($keyword) {
             return strtolower($keyword);
-        })
-            ->shuffle()
-            ->shift();
+        });
 
         // AWS Translate呼び出し
         $translate = new TranslateClient($options);
 
         try {
-            $translate_word = $translate->translateText([
+            $translate_text = $translate->translateText([
                 'SourceLanguageCode' => $sourceLanguage,
                 'TargetLanguageCode' => $targetLanguage,
-                'Text' => $translate_word,
-            ]);
-            $translate_word = $translate_word->get('TranslatedText');
-            $translate_word = preg_replace('/だ$/', '', $translate_word);
-            $translate_word = preg_replace('/て$/', '', $translate_word);
-            $translate_word = preg_replace('/に$/', '', $translate_word);
-            $translate_word = preg_replace('/を$/', '', $translate_word);
-            $translate_word = preg_replace('/は$/', '', $translate_word);
+                'Text' => $keywords->shuffle()->join(','),
+            ])
+                ->get('TranslatedText');
 
-            // 5文字以上　｜　英数字の場合
-            if (preg_match('/^([a-zA-Z0-9]{5,})$/', $translate_word)) {
-                return self::keywordTranslate($keywords, $options);
-            }
+            $keywords = collect(explode(', ', $translate_text))->map(function ($word) {
+                $word = preg_replace('/だ$/', '', $word);
+                $word = preg_replace('/て$/', '', $word);
+                $word = preg_replace('/に$/', '', $word);
+                $word = preg_replace('/を$/', '', $word);
+                $word = preg_replace('/は$/', '', $word);
 
+                return $word;
+            });
+
+            \Log::debug(json_encode($keywords, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         } catch (AwsException $e) {
             //
         }
 
-        return $translate_word;
+        return $keywords->all();
     }
 }
