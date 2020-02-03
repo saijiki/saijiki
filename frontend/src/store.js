@@ -22,6 +22,21 @@ const store = new Vuex.Store({
                 throw e;
             }
         },
+        async loginTwitter({ commit }, { oauth_token, oauth_verifier }) {
+            try {
+                const { data } = await axios.get('/api/auth/login/twitter', {
+                    params: {
+                        oauth_token,
+                        oauth_verifier,
+                    },
+                });
+
+                commit('setData', data);
+            } catch (e) {
+                commit('setData', null);
+                throw e;
+            }
+        },
         async login({ commit }, { email, password }) {
             try {
                 const { data } = await axios.post('/api/auth/login', {

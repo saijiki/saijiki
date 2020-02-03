@@ -17,6 +17,8 @@ Route::namespace('Auth')->prefix('auth')->name('auth.')->group(function () {
     Route::post('login', 'LoginController')->name('login');
     Route::post('register', 'RegisterController')->name('register');
     Route::post('logout', 'LogoutController')->name('logout');
+
+    Route::get('login/twitter', 'TwitterController')->name('login.twitter');
 });
 
 Route::match(['put', 'patch'], 'users', 'UserController@update')->name('users.update');
