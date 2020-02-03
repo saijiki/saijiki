@@ -99,20 +99,18 @@
                     </v-card-title>
                     <v-card-text class="pb-0">
                         <v-row justify="center">
-                          <vue-cropper
-                            height="192"
-                            ref="cropper"
-                            :src="imageFileUrl"
-                            alt=""
-                            :cropBoxResizable="false"
-                            :guides="false"
-                            :toggleDragModeOnDblclick="false"
-                            :center="false"
-                            :minContainerWidth=100
-                            :minContainerHeight=100
-                            v-if="imageFileUrl"
-                          >
-                        </vue-cropper>
+                            <vue-cropper
+                                v-if="imageFileUrl"
+                                ref="cropper"
+                                :center="false"
+                                :cropBoxResizable="false"
+                                :guides="false"
+                                height="192"
+                                :minContainerHeight="100"
+                                :minContainerWidth="100"
+                                :src="imageFileUrl"
+                                :toggleDragModeOnDblclick="false"
+                            />
                             <v-btn
                                 v-else
                                 block

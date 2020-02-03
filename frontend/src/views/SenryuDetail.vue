@@ -89,21 +89,9 @@
                     <v-card
                         color="white"
                         height="0"
-<<<<<<< HEAD
-<<<<<<< HEAD
-                        :img ="require('@/assets/sakura.png')"
-                        raised
-                        :style="{ paddingTop: '111.111111111%' }"
-=======
-                        :img="senryu.uploaded_image_url"
-                        raised
-                        :style="{ paddingTop: '111.111111111%', backgroundSize: 'contain' }"
->>>>>>> origin
-=======
                         :img="senryu.uploaded_image_url || require('@/assets/logo.png')"
                         raised
                         :style="{ paddingTop: '111.111111111%', backgroundSize: 'contain' }"
->>>>>>> origin
                         tag="a"
                         width="540"
                     />

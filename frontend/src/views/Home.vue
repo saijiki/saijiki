@@ -131,6 +131,7 @@ export default {
             }
 
             this.isLoading = true;
+
             try {
                 const { data } = await this.$axios.post('/api/senryus', {
                     image_file_url: this.imageFileUrl,
