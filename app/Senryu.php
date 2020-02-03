@@ -119,24 +119,29 @@ class Senryu extends Model
      */
     public static function generate(string $keyword, string $uploaded_image_url = null, bool $is_public = true)
     {
-        $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
+        // $morphemes = json_decode(\Storage::get('python/morphemes.json'), true);
+        //
+        // for ($i = 0, $j = 1; $i < 3; $i++, $j++) {
+        //     try {
+        //         list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence(
+        //             [5, 7, 5][$i],
+        //             $morphemes,
+        //             ${"keywords_{$i}"} ?? [$keyword]
+        //         );
+        //     } catch (\Exception $e) {
+        //         if ($i < 1) {
+        //             throw $e;
+        //         }
+        //
+        //         $i -= 2;
+        //         $j -= 2;
+        //     }
+        // }
 
-        for ($i = 0, $j = 1; $i < 3; $i++, $j++) {
-            try {
-                list('keywords' => ${"keywords_{$j}"}, 'surface' => ${"sentence_{$j}"}) = self::generateSentence(
-                    [5, 7, 5][$i],
-                    $morphemes,
-                    ${"keywords_{$i}"} ?? [$keyword]
-                );
-            } catch (\Exception $e) {
-                if ($i < 1) {
-                    throw $e;
-                }
-
-                $i -= 2;
-                $j -= 2;
-            }
-        }
+        $keyword = '花びら';
+        $sentence_1 = '花びらの';
+        $sentence_2 = '足踏み入れし';
+        $sentence_3 = 'けり初や';
 
         $filename = self::generateImage($keyword, $sentence_1, $sentence_2, $sentence_3);
 
