@@ -56,15 +56,16 @@
                                     color="deep-orange"
                                     icon
                                     large
+                                    :loading="isLikeLoading"
                                     :ripple="false"
-                                    @click.stop="senryu.goods++"
+                                    @click.stop="likeSenryu"
                                 >
                                     <v-badge color="deep-orange">
                                         <template #badge>
                                             {{ senryu.goods }}
                                         </template>
                                         <v-icon>
-                                            far fa-thumbs-up
+                                            {{ senryu.is_liked ? 'fas' : 'far' }} fa-thumbs-up
                                         </v-icon>
                                     </v-badge>
                                 </v-btn>
@@ -87,9 +88,10 @@
                 <template #back>
                     <v-card
                         color="white"
-                        height="600"
-                        :img="require('@/assets/logo.png')"
+                        height="0"
+                        :img="senryu.uploaded_image_url || require('@/assets/logo.png')"
                         raised
+                        :style="{ paddingTop: '111.111111111%', backgroundSize: 'contain' }"
                         tag="a"
                         width="540"
                     />
@@ -166,6 +168,7 @@ export default {
     data: () => ({
         isCopySnackbarVisible: false,
         isFlipped: false,
+        isLikeLoading: false,
         isLoading: false,
         isShareDialogVisible: false,
         senryu: {},
@@ -187,6 +190,29 @@ export default {
                 alert('川柳の取得に失敗しました。');
             } finally {
                 this.isLoading = false;
+            }
+        },
+        async likeSenryu() {
+            this.isLikeLoading = true;
+
+            if (this.senryu.is_liked) {
+                this.senryu.is_liked = !this.senryu.is_liked;
+                this.senryu.goods--;
+            } else {
+                this.senryu.is_liked = !this.senryu.is_liked;
+                this.senryu.goods++;
+            }
+
+            try {
+                const {data} = await this.$axios.put(
+                    `/api/senryus/${this.id}`
+                );
+
+                this.senryu = data;
+            } catch (e) {
+                alert('川柳のいいねに失敗しました。');
+            } finally {
+                this.isLikeLoading = false;
             }
         },
         shareOnLine() {

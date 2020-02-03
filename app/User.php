@@ -2,13 +2,14 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable;
+    use SoftDeletes, Notifiable;
 
     /**
      * The attributes that aren't mass assignable.
@@ -19,6 +20,7 @@ class User extends Authenticatable implements JWTSubject
         'id',
         'created_at',
         'updated_at',
+        'deleted_at',
     ];
 
     /**
@@ -29,6 +31,25 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
     ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    /**
+     * The senryus that belong to the user.
+     */
+    public function senryus()
+    {
+        return $this->belongsToMany(Senryu::class);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

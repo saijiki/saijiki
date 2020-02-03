@@ -40,6 +40,20 @@ export default new Router({
             component: () => import('@/views/Register'),
         },
         {
+            path: '/my/profile',
+            name: 'MyProfile',
+            component: () => import('@/views/MyProfile'),
+        },
+        {
+            path: '/my/senryus',
+            name: 'MySenryus',
+            component: () => import('@/views/MySenryus'),
+            props: ({ query: { page, type } }) => ({
+                page: page > 1 ? page | 0 : 1,
+                type,
+            }),
+        },
+        {
             path: '*',
             component: () => import('@/views/NotFound'),
         },
