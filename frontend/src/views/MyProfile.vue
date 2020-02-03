@@ -99,10 +99,18 @@
                     </v-card-title>
                     <v-card-text class="pb-0">
                         <v-row justify="center">
-                            <img
+                            <vue-cropper
                                 v-if="imageFileUrl"
+                                ref="cropper"
+                                :aspectRatio="1"
+                                :center="false"
+                                dragMode="none"
+                                :guides="false"
                                 height="192"
+                                :minCropBoxHeight="100"
+                                :minCropBoxWidth="100"
                                 :src="imageFileUrl"
+                                :toggleDragModeOnDblclick="false"
                             />
                             <v-btn
                                 v-else
@@ -138,6 +146,7 @@
                             :loading="isLoading"
                             text
                             type="submit"
+                            @click="cropImage"
                         >
                             編集
                         </v-btn>
@@ -269,7 +278,10 @@
 </template>
 
 <script>
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
 export default {
+    components: { VueCropper },
     data: () => ({
         isLoading: false,
         isAvatarEditDialogVisible: false,
@@ -282,6 +294,7 @@ export default {
         isPasswordEditDialogVisible: false,
         oldPassword: '',
         newPassword: '',
+        data: null,
     }),
     watch: {
         isAvatarEditDialogVisible(value) {
@@ -343,6 +356,9 @@ export default {
                 this.imageFileUrl = reader.result;
             });
             reader.readAsDataURL(this.imageFileObj);
+        },
+        cropImage() {
+          this.imageFileUrl= this.$refs.cropper.getCroppedCanvas().toDataURL()
         },
         async onSubmit() {
             if (this.isLoading) {
