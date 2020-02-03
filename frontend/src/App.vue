@@ -80,6 +80,18 @@
                                     ボタンから評価ができます。
                                 </p>
                             </v-stepper-content>
+                            <v-stepper-step editable step="4">
+                                投稿上の注意
+                            </v-stepper-step>
+                            <v-stepper-content step="4">
+                                <p>
+                                    川柳が生成され、
+                                    <v-icon size="18">
+                                        far fa-thumbs-up
+                                    </v-icon>
+                                    がつかないと72時間で削除されます。
+                                </p>
+                            </v-stepper-content>
                         </v-stepper>
                     </v-card-text>
                     <v-card-actions>
