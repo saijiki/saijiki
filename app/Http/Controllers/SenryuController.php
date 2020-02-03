@@ -78,16 +78,16 @@ class SenryuController extends Controller
     public function store(Request $request)
     {
         if ($request->has('image_file_url')) {
-            [$keyword, $filename] = Senryu::imageAnalysis($request->get('image_file_url'));
+            [$keywords, $filename] = Senryu::imageAnalysis($request->get('image_file_url'));
 
             // 非公開設定の場合は、アップロードされた画像を保持しない。
             if (!$request->get('is_public')) {
                 \Storage::delete("public/uploaded/{$filename}");
             }
 
-            return response()->json(Senryu::generate($keyword, asset("storage/uploaded/{$filename}"), $request->get('is_public')));
+            return response()->json(Senryu::generate($keywords, asset("storage/uploaded/{$filename}"), $request->get('is_public')));
         } else {
-            return response()->json(Senryu::generate($request->get('keyword')));
+            return response()->json(Senryu::generate([$request->get('keyword')]));
         }
     }
 
